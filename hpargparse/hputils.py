@@ -63,40 +63,6 @@ def make_detail_str(details):
     return "".join(strs)
 
 
-def make_context_detail(oc: HyperParameterOccurrence):
-    """
-    :param oc: an object of occurrence
-    :return: a dict of "name" and "detail"
-    """
-    with open(oc.filename) as f:
-        lines = [line.rstrip() for line in f]
-
-    begin = max(0, oc.lineno - 5)
-    end = min(len(lines), oc.lineno + 5)
-
-    idx = oc.lineno - 1 - begin  # lineno is 1-based
-
-    ctx_lines = lines[begin:end]
-
-    rows = []
-    num_width = len(str(end))
-    num_template = "{{:{}}}".format(num_width)
-
-    for i, line in enumerate(ctx_lines):
-        if i != idx:
-            prompt = "    "
-        else:
-            prompt = "==> "
-
-        num_str = num_template.format(begin + 1 + i)
-
-        row = "{}{}: {}".format(prompt, num_str, line)
-        rows.append(row)
-
-    detail = {"name": "context", "detail": rows}
-    return detail
-
-
 def make_value_illu(v):
     """Mute non-literal-evaluable values
 
@@ -121,7 +87,6 @@ def hp_list(mgr):
             d.select(L.exist_attr("filename")).sort(L.order_by("filename"))
         ):
             # make context detail
-            # details.append(make_context_detail(oc))
             details.append(
                 {
                     "name": "occurrence[{}]".format(i),
@@ -360,7 +325,7 @@ def bind(
             hp_list(hp_mgr)
             sys.exit(0)
 
-        if inject_actions and get_action_value("dry_run") is not None:
+        if inject_actions and get_action_value("dry_run"):
             sys.exit(0)
 
         return args
