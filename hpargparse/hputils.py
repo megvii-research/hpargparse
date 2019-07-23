@@ -127,7 +127,12 @@ def _get_argument_type_by_value(value):
     if isinstance(value, (list, dict)):
 
         def type_func(s):
-            eval_val = ast.literal_eval(s)
+            if isinstance(s, typ):
+                eval_val = s
+            else:
+                assert isinstance(s, str), type(s)
+                eval_val = ast.literal_eval(s)
+
             if not isinstance(eval_val, typ):
                 raise TypeError("value `{}` is not of type {}".format(eval_val, typ))
             return eval_val
