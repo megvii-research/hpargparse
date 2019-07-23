@@ -1,8 +1,8 @@
 import unittest
 import hpargparse
 import argparse
-import libhpman
 import pickle
+import hpman
 from pathlib import Path
 import contextlib
 
