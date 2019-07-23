@@ -26,7 +26,7 @@ def auto_cleanup_temp_dir():
 class TestAll(unittest.TestCase):
     def _make(self, fpath):
         fpath = str(fpath)
-        hp_mgr = libhpman.HyperParameterManager("_")
+        hp_mgr = hpman.HyperParameterManager("_")
         parser = argparse.ArgumentParser()
         parser.add_argument(dest="predefined_arg")
         hp_mgr.parse_file(fpath)
@@ -76,11 +76,13 @@ class TestAll(unittest.TestCase):
             )
 
     def test_hp_load(self):
+        # test load yaml
         parser, hp_mgr = self._make_basic()
         parser.parse_args(
             ["an_arg_value", "--hp-load", str(test_file_dir / "basic" / "config.yaml")]
         )
 
+        # test load pickle
         with auto_cleanup_temp_dir() as d:
             parser, hp_mgr = self._make_basic()
             path = str(d / "a.pkl")
