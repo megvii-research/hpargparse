@@ -1,6 +1,11 @@
 # hpargparse
 An argparse extension for [hpman]()
 
+# Installation
+```bash
+pip install hpargparse
+```
+
 # Example
 
 The example below lies [here](./examples/00-basic)
@@ -87,5 +92,17 @@ optional arguments:
   --hp-serial-format {auto,yaml,pickle}
                         Format of the saved config file. Defaults to auto
   --hp-dry-run          process all hpargparse actions and quit
+```
+
+
+# Development
+1. Install requirements:
+```
+pip install -r requirements.dev.txt -r requirements.txt
+```
+
+2. Install pre-commit hook
+```
+pre-commit install
 ```
 

@@ -231,7 +231,15 @@ def _infer_file_format(path):
     raise ValueError("Unsupported file extension: {} of path {}".format(ext, path))
 
 
-def hp_save(path, hp_mgr, serial_format):
+def hp_save(path: str, hp_mgr: hpman.HyperParameterManager, serial_format: str):
+    """Save(serialize) hyperparamters.
+
+    :param path: Where to save
+    :param hp_mgr: The HyperParameterManager to be saved.
+    :param serial_format: The saving format.
+
+    :see: `.bind` for more detail.
+    """
     values = hp_mgr.get_values()
 
     if serial_format == "auto":
@@ -248,6 +256,14 @@ def hp_save(path, hp_mgr, serial_format):
 
 
 def hp_load(path, hp_mgr, serial_format):
+    """Load(deserialize) hyperparamters.
+
+    :param path: Where to load
+    :param hp_mgr: The HyperParameterManager to be set.
+    :param serial_format: The saving format.
+
+    :see: `.bind` for more detail.
+    """
     if serial_format == "auto":
         serial_format = _infer_file_format(path)
 
@@ -281,11 +297,27 @@ def bind(
     action_prefix: str = config.HP_ACTION_PREFIX_DEFAULT,
     serial_format: str = config.HP_SERIAL_FORMAT_DEFAULT
 ):
-    """
+    """Bridging the gap between argparse and hpman. This is 
+        the most important method. Once bounded, hpargparse
+        will do the rest for you.
 
+    :param parser: A `class`:`argparse.ArgumentParser` object
+    :param hp_mgr: The hyperparameter manager from `hpman`. It is
+        usually an 'underscore' variable obtained by `from hpman.m import _`
     :param inject_actions: A list of actions names to inject, or True, to
         inject all available actions. Available actions are 'save', 'load', and
         'list'
+    :param action_prefix: Prefix for options of hpargparse injected additional
+        actions. e.g., the default action_prefix is 'hp'. Therefore, the
+        command line options added by `hpargparse.bind` will be '--hp-save',
+        '--hp-load', '--hp-list', etc.
+    :param serial_format: One of 'auto', 'yaml' and 'pickle'. Defaults to
+        'auto'.  In most cases you need not to alter this argument as long as
+        you give the right file extension when using save and load action. To
+        be specific, '.yaml' and '.yml' would be deemed as yaml format, and
+        '.pickle' and '.pkl' would be seen as pickle format. 
+
+    :note: pickle is done by `dill` to support pickling of more types.
     """
 
     # make action list to be injected
