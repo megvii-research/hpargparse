@@ -7,7 +7,7 @@ style:
 
 unittest:
     script:
-        - pip3 install -r requirements.dev.txt --user
+        - pip3 install -r requirements.dev.txt -r requirements.txt --user
         - export PATH=$PATH:$HOME/.local/bin
         - make test
     artifacts:
