@@ -1,0 +1,5 @@
+tabulate==0.8.3
+setuptools==41.0.1
+dill==0.2.9
+libhpman==0.0.1
+PyYAML==5.1.1
