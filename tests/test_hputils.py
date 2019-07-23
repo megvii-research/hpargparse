@@ -1,7 +1,7 @@
 import unittest
 import hpargparse
 import argparse
-import libhpman
+import hpman
 from pathlib import Path
 import contextlib
 
@@ -24,7 +24,7 @@ def auto_cleanup_temp_dir():
 
 class TestAll(unittest.TestCase):
     def _make_basic(self):
-        hp_mgr = libhpman.HyperParameterManager("_")
+        hp_mgr = hpman.HyperParameterManager("_")
         parser = argparse.ArgumentParser()
         parser.add_argument(dest="predefined_arg")
         hp_mgr.parse_file(test_file_dir / "basic" / "lib.py")

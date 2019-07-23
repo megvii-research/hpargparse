@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import argparse
 import hpargparse
-from libhpman.m import _
+from hpman.m import _
 import os
 
 BASE_DIR = os.path.dirname(os.path.realpath(__file__))

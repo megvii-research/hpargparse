@@ -1,2 +1,2 @@
 # hpargparse
-An argparse extension for [libhpman]()
+An argparse extension for [hpman]()

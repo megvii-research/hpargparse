@@ -11,8 +11,8 @@ from copy import deepcopy
 
 from types import MethodType
 
-import libhpman
-from libhpman import (
+import hpman
+from hpman import (
     HyperParameterManager,
     HyperParameterOccurrence,
     SourceHelper,
@@ -66,10 +66,10 @@ def make_detail_str(details):
 def make_value_illu(v):
     """Mute non-literal-evaluable values
 
-    :return: None if v is `class`:`libhpman.NotLiteralEvaluable`,
+    :return: None if v is `class`:`hpman.NotLiteralEvaluable`,
         otherwise the original input.
     """
-    if isinstance(v, libhpman.NotLiteralEvaluable):
+    if isinstance(v, hpman.NotLiteralEvaluable):
         return None
     return v
 
@@ -138,17 +138,17 @@ def _get_argument_type_by_value(value):
 
 def inject_args(
     parser: argparse.ArgumentParser,
-    hp_mgr: libhpman.HyperParameterManager,
+    hp_mgr: hpman.HyperParameterManager,
     *,
     inject_actions: List[str],
     action_prefix: str,
     serial_format: str
 ):
-    """Inject libhpman parsed hyperparameter settings into argparse arguments.
+    """Inject hpman parsed hyperparameter settings into argparse arguments.
     Only a limited set of format are supported. See code for details.
 
     :param parser: Use given parser object of `class`:`argparse.ArgumentParser`.
-    :param hp_mgr: a `class`:`libhpman.HyperParameterManager` object.
+    :param hp_mgr: a `class`:`hpman.HyperParameterManager` object.
 
     :param inject_actions: A list of actions names to inject
     :param action_prefix: prefix for hpargparse related options
@@ -270,7 +270,7 @@ def hp_load(path, hp_mgr, serial_format):
 
 def bind(
     parser: argparse.ArgumentParser,
-    hp_mgr: libhpman.HyperParameterManager,
+    hp_mgr: hpman.HyperParameterManager,
     *,
     inject_actions: Union[bool, List[str]] = True,
     action_prefix: str = config.HP_ACTION_PREFIX_DEFAULT,
