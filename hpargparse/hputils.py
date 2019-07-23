@@ -231,7 +231,7 @@ def _infer_file_format(path):
     raise ValueError("Unsupported file extension: {} of path {}".format(ext, path))
 
 
-def hp_save(path: str, hp_mgr: pman.HyperParameterManager, serial_format: str):
+def hp_save(path: str, hp_mgr: hpman.HyperParameterManager, serial_format: str):
     """Save(serialize) hyperparamters.
 
     :param path: Where to save
