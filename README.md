@@ -6,7 +6,7 @@ An argparse extension for [hpman]()
 The example below lies [here](./examples/00-basic)
 
 `lib.py`:
-```
+```python
 from hpman.m import _
 
 
