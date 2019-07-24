@@ -269,7 +269,7 @@ def hp_load(path, hp_mgr, serial_format):
 
     if serial_format == "yaml":
         with open(path, "r") as f:
-            values = yaml.load(f)
+            values = yaml.safe_load(f)
     elif serial_format == "pickle":
         with open(path, "rb") as f:
             values = dill.load(f)
