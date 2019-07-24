@@ -209,7 +209,7 @@ def inject_args(
 
     if inject_actions:
         parser.add_argument(
-            make_option("dry-run"),
+            make_option("exit"),
             action="store_true",
             help="process all hpargparse actions and quit",
         )
@@ -362,7 +362,7 @@ def bind(
             hp_list(hp_mgr)
             sys.exit(0)
 
-        if inject_actions and get_action_value("dry_run"):
+        if inject_actions and get_action_value("exit"):
             sys.exit(0)
 
         return args
