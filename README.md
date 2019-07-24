@@ -65,7 +65,7 @@ if __name__ == "__main__":
 ```bash
 usage: main.py [-h] [--a A] [--b B] [--hp-save HP_SAVE] [--hp-load HP_LOAD]
                [--hp-list] [--hp-serial-format {auto,yaml,pickle}]
-               [--hp-dry-run]
+               [--hp-exit]
                predefined_arg
 
 positional arguments:
@@ -82,7 +82,7 @@ optional arguments:
   --hp-list             List all available hyperparameters
   --hp-serial-format {auto,yaml,pickle}
                         Format of the saved config file. Defaults to auto
-  --hp-dry-run          process all hpargparse actions and quit
+  --hp-exit             process all hpargparse actions and quit
 ```
 
 
@@ -152,6 +152,9 @@ Details:
 |        |        |         |     10:                                               |
 +--------+--------+---------+-------------------------------------------------------+
 ```
+
+## Save to YAML file
+
 
 # Development
 1. Install requirements:
