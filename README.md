@@ -9,6 +9,7 @@ pip install hpargparse
 # Brief Introduction
 
 The following example lies in [examples/02-brief](./examples/02-brief).
+
 `main.py`
 ```python
 #!/usr/bin/env python3
