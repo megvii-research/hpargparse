@@ -68,6 +68,58 @@ a = 3
 b = 5
 lib.add() = 8
 lib.mult() = 15
+
+$ ./main.py some_thing --hp-list
+All hyperparameters:
+    ['a', 'b']
+Details:
++--------+--------+---------+-------------------------------------------------------+
+| name   | type   |   value | details                                               |
++========+========+=========+=======================================================+
+| a      | int    |       1 | occurrence[0]:                                        |
+|        |        |         |   /data/project/hpargparse/examples/00-basic/lib.py:5 |
+|        |        |         |     1: from hpman.m import _                          |
+|        |        |         |     2:                                                |
+|        |        |         |     3:                                                |
+|        |        |         |     4: def add():                                     |
+|        |        |         | ==> 5:     return _("a", 1) + _("b", 2)               |
+|        |        |         |     6:                                                |
+|        |        |         |     7:                                                |
+|        |        |         |     8: def mult():                                    |
+|        |        |         |     9:     return _("a") * _("b")                     |
+|        |        |         |     10:                                               |
+|        |        |         | occurrence[1]:                                        |
+|        |        |         |   /data/project/hpargparse/examples/00-basic/lib.py:9 |
+|        |        |         |     4: def add():                                     |
+|        |        |         |     5:     return _("a", 1) + _("b", 2)               |
+|        |        |         |     6:                                                |
+|        |        |         |     7:                                                |
+|        |        |         |     8: def mult():                                    |
+|        |        |         | ==> 9:     return _("a") * _("b")                     |
+|        |        |         |     10:                                               |
++--------+--------+---------+-------------------------------------------------------+
+| b      | int    |       2 | occurrence[0]:                                        |
+|        |        |         |   /data/project/hpargparse/examples/00-basic/lib.py:5 |
+|        |        |         |     1: from hpman.m import _                          |
+|        |        |         |     2:                                                |
+|        |        |         |     3:                                                |
+|        |        |         |     4: def add():                                     |
+|        |        |         | ==> 5:     return _("a", 1) + _("b", 2)               |
+|        |        |         |     6:                                                |
+|        |        |         |     7:                                                |
+|        |        |         |     8: def mult():                                    |
+|        |        |         |     9:     return _("a") * _("b")                     |
+|        |        |         |     10:                                               |
+|        |        |         | occurrence[1]:                                        |
+|        |        |         |   /data/project/hpargparse/examples/00-basic/lib.py:9 |
+|        |        |         |     4: def add():                                     |
+|        |        |         |     5:     return _("a", 1) + _("b", 2)               |
+|        |        |         |     6:                                                |
+|        |        |         |     7:                                                |
+|        |        |         |     8: def mult():                                    |
+|        |        |         | ==> 9:     return _("a") * _("b")                     |
+|        |        |         |     10:                                               |
++--------+--------+---------+-------------------------------------------------------+
 ```
 
 # Help
