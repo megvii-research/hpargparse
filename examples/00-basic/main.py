@@ -9,14 +9,15 @@ BASE_DIR = os.path.dirname(os.path.realpath(__file__))
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument(dest="predefined_arg")
+
     # ... do whatever you want
+    parser.add_argument(dest="predefined_arg")
 
     # analyze everything in this directory
-    _.parse_file(BASE_DIR)
+    _.parse_file(BASE_DIR)  # <-- IMPORTANT
 
     # bind will monkey_patch parser.parse_args to do its job
-    hpargparse.bind(parser, _)
+    hpargparse.bind(parser, _)  # <-- IMPORTANT
 
     # parse args and set the values
     args = parser.parse_args()
