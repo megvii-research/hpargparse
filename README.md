@@ -21,7 +21,7 @@ import argparse
 
 def func():
     weight_decay = _("weight_decay", 1e-5)
-    print("func: weight_decay = {}".format(weight_decay))
+    print("weight decay is {}".format(weight_decay))
 
 
 def main():
@@ -32,13 +32,14 @@ def main():
 
     func()
 
+
 if __name__ == "__main__":
     main()
 ```
 
 results in:
 ```bash
-$ ./main.py 
+$ ./main.py
 weight decay is 1e-05
 $ ./main.py --weight-decay 1e-4
 weight decay is 0.0001
