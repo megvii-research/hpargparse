@@ -61,14 +61,45 @@ if __name__ == "__main__":
     main()
 ```
 
-Results:
+## Help
+```bash
+usage: main.py [-h] [--a A] [--b B] [--hp-save HP_SAVE] [--hp-load HP_LOAD]
+               [--hp-list] [--hp-serial-format {auto,yaml,pickle}]
+               [--hp-dry-run]
+               predefined_arg
+
+positional arguments:
+  predefined_arg
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --a A
+  --b B
+  --hp-save HP_SAVE     Save hyperparameters to a file. The hyperparameters
+                        are saved after processing of all other options
+  --hp-load HP_LOAD     Load hyperparameters from a file. The hyperparameters
+                        are loaded before any other options are processed
+  --hp-list             List all available hyperparameters
+  --hp-serial-format {auto,yaml,pickle}
+                        Format of the saved config file. Defaults to auto
+  --hp-dry-run          process all hpargparse actions and quit
+```
+
+
+## Set Hyperparameters from Command Line Arguments
 ```bash
 $ ./main.py some_thing --a 3 --b 5
 a = 3
 b = 5
 lib.add() = 8
 lib.mult() = 15
+```
 
+
+## List All Hyperparameters 
+... as well as their occurrence:
+
+```bash
 $ ./main.py some_thing --hp-list
 All hyperparameters:
     ['a', 'b']
@@ -121,31 +152,6 @@ Details:
 |        |        |         |     10:                                               |
 +--------+--------+---------+-------------------------------------------------------+
 ```
-
-# Help
-```bash
-usage: main.py [-h] [--a A] [--b B] [--hp-save HP_SAVE] [--hp-load HP_LOAD]
-               [--hp-list] [--hp-serial-format {auto,yaml,pickle}]
-               [--hp-dry-run]
-               predefined_arg
-
-positional arguments:
-  predefined_arg
-
-optional arguments:
-  -h, --help            show this help message and exit
-  --a A
-  --b B
-  --hp-save HP_SAVE     Save hyperparameters to a file. The hyperparameters
-                        are saved after processing of all other options
-  --hp-load HP_LOAD     Load hyperparameters from a file. The hyperparameters
-                        are loaded before any other options are processed
-  --hp-list             List all available hyperparameters
-  --hp-serial-format {auto,yaml,pickle}
-                        Format of the saved config file. Defaults to auto
-  --hp-dry-run          process all hpargparse actions and quit
-```
-
 
 # Development
 1. Install requirements:
