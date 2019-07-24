@@ -6,9 +6,80 @@ An argparse extension for [hpman]()
 pip install hpargparse
 ```
 
-# Example
+# Brief Introduction
 
-The example below lies [here](./examples/00-basic)
+The following example lies in [examples/02-brief](./examples/02-brief).
+`main.py`
+```python
+#!/usr/bin/env python3
+
+from hpman.m import _
+import hpargparse
+
+import argparse
+
+
+def func():
+    weight_decay = _("weight_decay", 1e-5)
+    print("func: weight_decay = {}".format(weight_decay))
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    _.parse_file(__file__)
+    hpargparse.bind(parser, _)
+    parser.parse_args()
+
+    func()
+
+if __name__ == "__main__":
+    main()
+```
+
+results in:
+```bash
+$ ./main.py 
+weight decay is 1e-05
+$ ./main.py --weight-decay 1e-4
+weight decay is 0.0001
+$ ./main.py --weight-decay 1e-4 --hp-list
+weight_decay: 0.0001
+$ ./main.py --weight-decay 1e-4 --hp-list detail
+All hyperparameters:
+    ['weight_decay']
+Details:
++--------------+--------+---------+--------------------------------------------------------------+
+| name         | type   |   value | details                                                      |
++==============+========+=========+==============================================================+
+| weight_decay | float  |  0.0001 | occurrence[0]:                                               |
+|              |        |         |   ./main.py:10                                               |
+|              |        |         |      5:                                                      |
+|              |        |         |      6: import argparse                                      |
+|              |        |         |      7:                                                      |
+|              |        |         |      8:                                                      |
+|              |        |         |      9: def func():                                          |
+|              |        |         | ==> 10:     weight_decay = _("weight_decay", 1e-5)           |
+|              |        |         |     11:     print("weight decay is {}".format(weight_decay)) |
+|              |        |         |     12:                                                      |
+|              |        |         |     13:                                                      |
+|              |        |         |     14: def main():                                          |
+|              |        |         |     15:     parser = argparse.ArgumentParser()               |
++--------------+--------+---------+--------------------------------------------------------------+
+```
+
+# Example: Deep Learning Experiment
+This example lies in [examples/01-nn-training](./examples/01-nn-training).
+
+It is a fully-functional example of training a LeNet on MNIST using
+`hpargparse` and `hpman` collaboratively to manage hyperparameters.
+
+We **highly suggest* you playing around this example.
+
+
+# Example: Basics Walkthrough
+Now we break down the functions one-by-one.
+
+The following example lies in [examples/00-basic](./examples/00-basic).
 
 `lib.py`:
 ```python
@@ -36,14 +107,15 @@ BASE_DIR = os.path.dirname(os.path.realpath(__file__))
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument(dest="predefined_arg")
+
     # ... do whatever you want
+    parser.add_argument(dest="predefined_arg")
 
     # analyze everything in this directory
-    _.parse_file(BASE_DIR)
+    _.parse_file(BASE_DIR)  # <-- IMPORTANT
 
     # bind will monkey_patch parser.parse_args to do its job
-    hpargparse.bind(parser, _)
+    hpargparse.bind(parser, _)  # <-- IMPORTANT
 
     # parse args and set the values
     args = parser.parse_args()
@@ -63,9 +135,10 @@ if __name__ == "__main__":
 
 ## Help
 ```bash
+$ ./main.py -h
 usage: main.py [-h] [--a A] [--b B] [--hp-save HP_SAVE] [--hp-load HP_LOAD]
-               [--hp-list] [--hp-serial-format {auto,yaml,pickle}]
-               [--hp-exit]
+               [--hp-list [{detail,yaml}]]
+               [--hp-serial-format {auto,yaml,pickle}] [--hp-exit]
                predefined_arg
 
 positional arguments:
@@ -79,7 +152,9 @@ optional arguments:
                         are saved after processing of all other options
   --hp-load HP_LOAD     Load hyperparameters from a file. The hyperparameters
                         are loaded before any other options are processed
-  --hp-list             List all available hyperparameters
+  --hp-list [{detail,yaml}]
+                        List all available hyperparameters. If `--hp-list
+                        detail` is specified, a verbose table will be print
   --hp-serial-format {auto,yaml,pickle}
                         Format of the saved config file. Defaults to auto
   --hp-exit             process all hpargparse actions and quit
@@ -97,64 +172,86 @@ lib.mult() = 15
 
 
 ## List All Hyperparameters 
-... as well as their occurrence:
-
 ```bash
-$ ./main.py some_thing --hp-list
+$ ./main.py some_arg --hp-list
+a: 1
+b: 2
+```
+... and details:
+```bash
+$ ./main.py some_arg --hp-list detail
 All hyperparameters:
     ['a', 'b']
 Details:
-+--------+--------+---------+-------------------------------------------------------+
-| name   | type   |   value | details                                               |
-+========+========+=========+=======================================================+
-| a      | int    |       1 | occurrence[0]:                                        |
-|        |        |         |   /data/project/hpargparse/examples/00-basic/lib.py:5 |
-|        |        |         |     1: from hpman.m import _                          |
-|        |        |         |     2:                                                |
-|        |        |         |     3:                                                |
-|        |        |         |     4: def add():                                     |
-|        |        |         | ==> 5:     return _("a", 1) + _("b", 2)               |
-|        |        |         |     6:                                                |
-|        |        |         |     7:                                                |
-|        |        |         |     8: def mult():                                    |
-|        |        |         |     9:     return _("a") * _("b")                     |
-|        |        |         |     10:                                               |
-|        |        |         | occurrence[1]:                                        |
-|        |        |         |   /data/project/hpargparse/examples/00-basic/lib.py:9 |
-|        |        |         |     4: def add():                                     |
-|        |        |         |     5:     return _("a", 1) + _("b", 2)               |
-|        |        |         |     6:                                                |
-|        |        |         |     7:                                                |
-|        |        |         |     8: def mult():                                    |
-|        |        |         | ==> 9:     return _("a") * _("b")                     |
-|        |        |         |     10:                                               |
-+--------+--------+---------+-------------------------------------------------------+
-| b      | int    |       2 | occurrence[0]:                                        |
-|        |        |         |   /data/project/hpargparse/examples/00-basic/lib.py:5 |
-|        |        |         |     1: from hpman.m import _                          |
-|        |        |         |     2:                                                |
-|        |        |         |     3:                                                |
-|        |        |         |     4: def add():                                     |
-|        |        |         | ==> 5:     return _("a", 1) + _("b", 2)               |
-|        |        |         |     6:                                                |
-|        |        |         |     7:                                                |
-|        |        |         |     8: def mult():                                    |
-|        |        |         |     9:     return _("a") * _("b")                     |
-|        |        |         |     10:                                               |
-|        |        |         | occurrence[1]:                                        |
-|        |        |         |   /data/project/hpargparse/examples/00-basic/lib.py:9 |
-|        |        |         |     4: def add():                                     |
-|        |        |         |     5:     return _("a", 1) + _("b", 2)               |
-|        |        |         |     6:                                                |
-|        |        |         |     7:                                                |
-|        |        |         |     8: def mult():                                    |
-|        |        |         | ==> 9:     return _("a") * _("b")                     |
-|        |        |         |     10:                                               |
-+--------+--------+---------+-------------------------------------------------------+
++--------+--------+---------+----------------------------------------------------------------+
+| name   | type   |   value | details                                                        |
++========+========+=========+================================================================+
+| a      | int    |       1 | occurrence[0]:                                                 |
+|        |        |         |   /data/project/hpargparse/examples/00-basic/lib.py:8          |
+|        |        |         |      3: # for more usecases, please refer to hpman's document  |
+|        |        |         |      4:                                                        |
+|        |        |         |      5:                                                        |
+|        |        |         |      6: def add():                                             |
+|        |        |         |      7:     # define a hyperparameter on-the-fly with defaults |
+|        |        |         | ==>  8:     return _("a", 1) + _("b", 2)                       |
+|        |        |         |      9:                                                        |
+|        |        |         |     10:                                                        |
+|        |        |         |     11: def mult():                                            |
+|        |        |         |     12:     # reuse a pre-defined hyperparameters              |
+|        |        |         |     13:     return _("a") * _("b")                             |
+|        |        |         | occurrence[1]:                                                 |
+|        |        |         |   /data/project/hpargparse/examples/00-basic/lib.py:13         |
+|        |        |         |      8:     return _("a", 1) + _("b", 2)                       |
+|        |        |         |      9:                                                        |
+|        |        |         |     10:                                                        |
+|        |        |         |     11: def mult():                                            |
+|        |        |         |     12:     # reuse a pre-defined hyperparameters              |
+|        |        |         | ==> 13:     return _("a") * _("b")                             |
+|        |        |         |     14:                                                        |
++--------+--------+---------+----------------------------------------------------------------+
+| b      | int    |       2 | occurrence[0]:                                                 |
+|        |        |         |   /data/project/hpargparse/examples/00-basic/lib.py:8          |
+|        |        |         |      3: # for more usecases, please refer to hpman's document  |
+|        |        |         |      4:                                                        |
+|        |        |         |      5:                                                        |
+|        |        |         |      6: def add():                                             |
+|        |        |         |      7:     # define a hyperparameter on-the-fly with defaults |
+|        |        |         | ==>  8:     return _("a", 1) + _("b", 2)                       |
+|        |        |         |      9:                                                        |
+|        |        |         |     10:                                                        |
+|        |        |         |     11: def mult():                                            |
+|        |        |         |     12:     # reuse a pre-defined hyperparameters              |
+|        |        |         |     13:     return _("a") * _("b")                             |
+|        |        |         | occurrence[1]:                                                 |
+|        |        |         |   /data/project/hpargparse/examples/00-basic/lib.py:13         |
+|        |        |         |      8:     return _("a", 1) + _("b", 2)                       |
+|        |        |         |      9:                                                        |
+|        |        |         |     10:                                                        |
+|        |        |         |     11: def mult():                                            |
+|        |        |         |     12:     # reuse a pre-defined hyperparameters              |
+|        |        |         | ==> 13:     return _("a") * _("b")                             |
+|        |        |         |     14:                                                        |
++--------+--------+---------+----------------------------------------------------------------+
 ```
 
-## Save to YAML file
+## Save/Load from/to YAML file
+```bash
+# save to yaml file
+$ ./main.py some_arg --hp-save /tmp/config.yaml --hp-exit
 
+$ cat /tmp/config.yaml 
+a: 1
+b: 2
+
+# load from yaml file
+$ cat config_modified.yaml
+a: 123
+b: 456
+
+$ ./main.py some_arg --hp-load config_modified.yaml --hp-list
+a: 123
+b: 456
+```
 
 # Development
 1. Install requirements:

@@ -176,8 +176,15 @@ def inject_args(
         if action == "list":
             parser.add_argument(
                 make_option("list"),
-                action="store_true",
-                help="List all available hyperparameters",
+                action="store",
+                default=False,
+                const="yaml",
+                nargs="?",
+                choices=["detail", "yaml"],
+                help=(
+                    "List all available hyperparameters. If `{} detail` is"
+                    " specified, a verbose table will be print"
+                ).format(make_option("list")),
             )
         elif action == "save":
             parser.add_argument(
@@ -202,9 +209,10 @@ def inject_args(
             make_option("serial-format"),
             default=serial_format,
             choices=config.HP_SERIAL_FORMAT_CHOICES,
-            help="Format of the saved config file. Defaults to {}".format(
-                serial_format
-            ),
+            help=(
+                "Format of the saved config file. Defaults to {}."
+                " Can be set to override auto file type deduction."
+            ).format(serial_format),
         )
 
     if inject_actions:
@@ -228,7 +236,12 @@ def _infer_file_format(path):
 
     if ext in supported_exts:
         return supported_exts[ext]
-    raise ValueError("Unsupported file extension: {} of path {}".format(ext, path))
+    raise ValueError(
+        "Unsupported file extension: {} of path {}".format(ext, path),
+        "Supported file extensions: {}".format(
+            ", ".join("`{}`".format(i) for i in sorted(supported_exts))
+        ),
+    )
 
 
 def hp_save(path: str, hp_mgr: hpman.HyperParameterManager, serial_format: str):
@@ -248,11 +261,10 @@ def hp_save(path: str, hp_mgr: hpman.HyperParameterManager, serial_format: str):
     if serial_format == "yaml":
         with open(path, "w") as f:
             yaml.dump(values, f)
-    elif serial_format == "pickle":
+    else:
+        assert serial_format == "pickle", serial_format
         with open(path, "wb") as f:
             dill.dump(values, f)
-    else:
-        raise ValueError("Unknown serial format: {}".format(serial_format))
 
 
 def hp_load(path, hp_mgr, serial_format):
@@ -270,11 +282,10 @@ def hp_load(path, hp_mgr, serial_format):
     if serial_format == "yaml":
         with open(path, "r") as f:
             values = yaml.safe_load(f)
-    elif serial_format == "pickle":
+    else:
+        assert serial_format == "pickle", serial_format
         with open(path, "rb") as f:
             values = dill.load(f)
-    else:
-        raise ValueError("Unknown serial format: {}".format(serial_format))
 
     old_values = hp_mgr.get_values()
     for k, v in values.items():
@@ -297,7 +308,7 @@ def bind(
     action_prefix: str = config.HP_ACTION_PREFIX_DEFAULT,
     serial_format: str = config.HP_SERIAL_FORMAT_DEFAULT
 ):
-    """Bridging the gap between argparse and hpman. This is 
+    """Bridging the gap between argparse and hpman. This is
         the most important method. Once bounded, hpargparse
         will do the rest for you.
 
@@ -315,7 +326,7 @@ def bind(
         'auto'.  In most cases you need not to alter this argument as long as
         you give the right file extension when using save and load action. To
         be specific, '.yaml' and '.yml' would be deemed as yaml format, and
-        '.pickle' and '.pkl' would be seen as pickle format. 
+        '.pickle' and '.pkl' would be seen as pickle format.
 
     :note: pickle is done by `dill` to support pickling of more types.
     """
@@ -359,7 +370,12 @@ def bind(
             hp_save(save_value, hp_mgr, serial_format)
 
         if "list" in inject_actions and args.hp_list:
-            hp_list(hp_mgr)
+            if args.hp_list == "yaml":
+                print(yaml.dump(hp_mgr.get_values()), end="")
+            else:
+                assert args.hp_list == "detail", args.hp_list
+                hp_list(hp_mgr)
+
             sys.exit(0)
 
         if inject_actions and get_action_value("exit"):

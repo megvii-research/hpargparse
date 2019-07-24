@@ -56,6 +56,9 @@ class TestAll(unittest.TestCase):
     def test_hp_list(self):
         parser, hp_mgr = self._make_basic()
         self.assertRaises(SystemExit, parser.parse_args, ["an_arg_value", "--hp-list"])
+        self.assertRaises(
+            SystemExit, parser.parse_args, ["an_arg_value", "--hp-list", "detail"]
+        )
 
     def test_hp_save(self):
         for name in ["config.yaml", "config.yml", "config.pkl", "config.pickle"]:

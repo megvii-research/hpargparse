@@ -32,7 +32,7 @@ def ConvBNReLU(in_channels, out_channels, *args, **kwargs):
 
 
 def get_model():
-    base_channel = _("base_channel", 32)
+    base_channel = _("base_channel", 32)  # <-- hyperparameter
     in_channels = 1  # _('input_channels', 1)
 
     return nn.Sequential(

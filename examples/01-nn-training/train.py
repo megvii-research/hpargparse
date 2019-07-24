@@ -28,7 +28,9 @@ def main():
     optimizer_cls = {
         "adam": optim.Adam,
         "sgd": functools.partial(optim.SGD, momentum=0.9),
-    }[_("optimizer", "adam")]
+    }[
+        _("optimizer", "adam")  # <-- hyperparameter
+    ]
 
     import model
 
@@ -38,8 +40,8 @@ def main():
 
     optimizer = optimizer_cls(
         net.parameters(),
-        lr=_("learning_rate", 1e-3),
-        weight_decay=_("weight_decay", 1e-5),
+        lr=_("learning_rate", 1e-3),  # <-- hyperparameter
+        weight_decay=_("weight_decay", 1e-5),  # <-- hyperparameter
     )
 
     import dataset
@@ -51,19 +53,21 @@ def main():
         # gpu memory
         test_ds = {k: v.cuda() for k, v in test_ds.items()}
 
-    rng = np.random.RandomState(_("seed", 42))
+    rng = np.random.RandomState(_("seed", 42))  # <-- hyperparameter
 
-    for epoch in range(_("num_epochs", 30)):
+    for epoch in range(_("num_epochs", 30)):  # <-- hyperparameter
         net.train()
         tq = tqdm(
             enumerate(
                 dataset.iter_dataset_batch(
-                    rng, train_ds, _("batch_size", 256), cuda=torch.cuda.is_available()
+                    rng,
+                    train_ds,
+                    _("batch_size", 256),  # <-- hyperparameter
+                    cuda=torch.cuda.is_available(),
                 )
             )
         )
         for step, minibatch in tq:
-
             optimizer.zero_grad()
 
             Y_pred = net(minibatch["data"])
