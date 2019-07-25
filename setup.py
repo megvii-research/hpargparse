@@ -3,10 +3,12 @@ import setuptools
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
+with open("requirements.txt") as f:
+    requirements = [line.strip() for line in f]
 
 setuptools.setup(
     name="hpargparse",
-    version="0.0.2",
+    version="0.0.3",
     author="EMTF",
     author_email="emtf@megvii.com",
     description="An argparse extension for hpman",
@@ -14,6 +16,7 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     url="https://github.com/megvii/hpargparse",
     packages=setuptools.find_packages(),
+    install_requires=requirements,
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
