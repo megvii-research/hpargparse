@@ -69,6 +69,62 @@ Details:
 +--------------+--------+---------+--------------------------------------------------------------+
 ```
 
+# hpcli: The Commandline Tool
+Besides using `hpargparse.bind` in you code, we also come with a command line
+tool `hpcli` to provide similar functions to any existing file using hpman.
+
+`src.py`
+```python
+#!/usr/bin/env python3
+
+from hpman.m import _
+
+_('num_channels', 128)
+_('num_layers', 50)
+```
+
+In shell:
+```bash
+$ hpcli src.py
+num_channels: 128
+num_layers: 50
+$ hpcli src.py --num-layers 101
+num_channels: 128
+num_layers: 101
+$ hpcli src.py --num-layers 101 --hp-save config.yaml
+num_channels: 128
+num_layers: 101
+$ hpcli src.py --num-layers 101 --hp-save config.yaml --hp-list detail
+All hyperparameters:
+    ['num_channels', 'num_layers']
+Details:
++--------------+--------+---------+-------------------------------+
+| name         | type   |   value | details                       |
++==============+========+=========+===============================+
+| num_channels | int    |     128 | occurrence[0]:                |
+|              |        |         |   src.py:5                    |
+|              |        |         |     1: #!/usr/bin/env python3 |
+|              |        |         |     2:                        |
+|              |        |         |     3: from hpman.m import _  |
+|              |        |         |     4:                        |
+|              |        |         | ==> 5: _('num_channels', 128) |
+|              |        |         |     6: _('num_layers', 50)    |
+|              |        |         |     7:                        |
++--------------+--------+---------+-------------------------------+
+| num_layers   | int    |     101 | occurrence[0]:                |
+|              |        |         |   src.py:6                    |
+|              |        |         |     1: #!/usr/bin/env python3 |
+|              |        |         |     2:                        |
+|              |        |         |     3: from hpman.m import _  |
+|              |        |         |     4:                        |
+|              |        |         |     5: _('num_channels', 128) |
+|              |        |         | ==> 6: _('num_layers', 50)    |
+|              |        |         |     7:                        |
++--------------+--------+---------+-------------------------------+
+```
+
+This could be a handy tool to inspect the hyperparameters in your code.
+
 # Example: Deep Learning Experiment
 This example lies in [examples/01-nn-training](./examples/01-nn-training).
 
