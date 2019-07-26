@@ -88,7 +88,7 @@ optional arguments:
   --hp-exit             process all hpargparse actions and quit
 ```
 
-# hpcli: The Commandline Tool
+# hpcli: The Command Line Tool
 Besides using `hpargparse.bind` in you code, we also come with a command line
 tool `hpcli` to provide similar functions to any existing file using hpman.
 
