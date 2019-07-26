@@ -116,7 +116,10 @@ def hp_list(mgr):
     print(s)
 
 
-def _parse_action_list(inject_actions):
+def parse_action_list(inject_actions: Union[bool, List[str]]) -> List[str]:
+    """Parse inputs to inject actions.
+    :param inject_actions: :see: `function`:`.bind` for detail
+    """
     if isinstance(inject_actions, bool):
         inject_actions = {True: ["save", "load", "list"], False: []}[inject_actions]
     return inject_actions
@@ -332,7 +335,7 @@ def bind(
     """
 
     # make action list to be injected
-    inject_actions = _parse_action_list(inject_actions)
+    inject_actions = parse_action_list(inject_actions)
 
     inject_args(
         parser,
