@@ -67,7 +67,97 @@ Details:
 |              |        |         |     14: def main():                                          |
 |              |        |         |     15:     parser = argparse.ArgumentParser()               |
 +--------------+--------+---------+--------------------------------------------------------------+
+$ ./main.py -h
+usage: main.py [-h] [--weight-decay WEIGHT_DECAY] [--hp-save HP_SAVE]
+               [--hp-load HP_LOAD] [--hp-list [{detail,yaml}]]
+               [--hp-serial-format {auto,yaml,pickle}] [--hp-exit]
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --weight-decay WEIGHT_DECAY
+  --hp-save HP_SAVE     Save hyperparameters to a file. The hyperparameters
+                        are saved after processing of all other options
+  --hp-load HP_LOAD     Load hyperparameters from a file. The hyperparameters
+                        are loaded before any other options are processed
+  --hp-list [{detail,yaml}]
+                        List all available hyperparameters. If `--hp-list
+                        detail` is specified, a verbose table will be print
+  --hp-serial-format {auto,yaml,pickle}
+                        Format of the saved config file. Defaults to auto. Can
+                        be set to override auto file type deduction.
+  --hp-exit             process all hpargparse actions and quit
 ```
+
+# hpcli: The Commandline Tool
+Besides using `hpargparse.bind` in you code, we also come with a command line
+tool `hpcli` to provide similar functions to any existing file using hpman.
+
+`src.py`
+```python
+from hpman.m import _
+
+_('num_channels', 128)
+_('num_layers', 50)
+```
+
+In shell:
+```bash
+$ hpcli src.py
+num_channels: 128
+num_layers: 50
+$ hpcli src.py --num-layers 101
+num_channels: 128
+num_layers: 101
+$ hpcli src.py --num-layers 101 --hp-save config.yaml
+num_channels: 128
+num_layers: 101
+$ hpcli src.py --num-layers 101 --hp-save config.yaml --hp-list detail
+All hyperparameters:
+    ['num_channels', 'num_layers']
+Details:
++--------------+--------+---------+-------------------------------+
+| name         | type   |   value | details                       |
++==============+========+=========+===============================+
+| num_channels | int    |     128 | occurrence[0]:                |
+|              |        |         |   src.py:3                    |
+|              |        |         |     1: from hpman.m import _  |
+|              |        |         |     2:                        |
+|              |        |         | ==> 3: _("num_channels", 128) |
+|              |        |         |     4: _("num_layers", 50)    |
+|              |        |         |     5:                        |
++--------------+--------+---------+-------------------------------+
+| num_layers   | int    |     101 | occurrence[0]:                |
+|              |        |         |   src.py:4                    |
+|              |        |         |     1: from hpman.m import _  |
+|              |        |         |     2:                        |
+|              |        |         |     3: _("num_channels", 128) |
+|              |        |         | ==> 4: _("num_layers", 50)    |
+|              |        |         |     5:                        |
++--------------+--------+---------+-------------------------------+
+$ hpcli src.py -h
+usage: hpcli [-h] [--num-channels NUM_CHANNELS] [--num-layers NUM_LAYERS]
+             [--hp-save HP_SAVE] [--hp-load HP_LOAD]
+             [--hp-list [{detail,yaml}]]
+             [--hp-serial-format {auto,yaml,pickle}] [--hp-exit]
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --num-channels NUM_CHANNELS
+  --num-layers NUM_LAYERS
+  --hp-save HP_SAVE     Save hyperparameters to a file. The hyperparameters
+                        are saved after processing of all other options
+  --hp-load HP_LOAD     Load hyperparameters from a file. The hyperparameters
+                        are loaded before any other options are processed
+  --hp-list [{detail,yaml}]
+                        List all available hyperparameters. If `--hp-list
+                        detail` is specified, a verbose table will be print
+  --hp-serial-format {auto,yaml,pickle}
+                        Format of the saved config file. Defaults to auto. Can
+                        be set to override auto file type deduction.
+  --hp-exit             process all hpargparse actions and quit
+```
+
+This could be a handy tool to inspect the hyperparameters in your code.
 
 # Example: Deep Learning Experiment
 This example lies in [examples/01-nn-training](./examples/01-nn-training).

@@ -1,0 +1,33 @@
+#!/usr/bin/env python3
+
+import argparse
+from hpman import HyperParameterManager
+import hpargparse
+import os
+import sys
+
+
+def main():
+    parser = argparse.ArgumentParser(add_help=False)
+    parser.add_argument(dest="files_and_directories", nargs="+")
+    parser.add_argument(
+        "--placeholder", default="_", help="placeholder of hpman used in given files"
+    )
+
+    args, remain_args = parser.parse_known_args()
+
+    parser = argparse.ArgumentParser()
+    hp_mgr = HyperParameterManager(args.placeholder)
+    hp_mgr.parse_file(args.files_and_directories)
+    hpargparse.bind(parser, hp_mgr)
+
+    # switch --hp-list on by default
+    for action in parser._actions:
+        if action.dest == "hp_list":
+            action.default = "yaml"
+
+    args = parser.parse_args(remain_args)
+
+
+if __name__ == "__main__":
+    main()

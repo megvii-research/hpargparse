@@ -8,7 +8,7 @@ with open("requirements.txt") as f:
 
 setuptools.setup(
     name="hpargparse",
-    version="0.0.3",
+    version="0.0.4",
     author="EMTF",
     author_email="emtf@megvii.com",
     description="An argparse extension for hpman",
@@ -17,6 +17,7 @@ setuptools.setup(
     url="https://github.com/megvii/hpargparse",
     packages=setuptools.find_packages(),
     install_requires=requirements,
+    scripts=["bin/hpcli"],
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
