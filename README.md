@@ -94,8 +94,6 @@ tool `hpcli` to provide similar functions to any existing file using hpman.
 
 `src.py`
 ```python
-#!/usr/bin/env python3
-
 from hpman.m import _
 
 _('num_channels', 128)
@@ -121,24 +119,20 @@ Details:
 | name         | type   |   value | details                       |
 +==============+========+=========+===============================+
 | num_channels | int    |     128 | occurrence[0]:                |
-|              |        |         |   src.py:5                    |
-|              |        |         |     1: #!/usr/bin/env python3 |
+|              |        |         |   src.py:3                    |
+|              |        |         |     1: from hpman.m import _  |
 |              |        |         |     2:                        |
-|              |        |         |     3: from hpman.m import _  |
-|              |        |         |     4:                        |
-|              |        |         | ==> 5: _('num_channels', 128) |
-|              |        |         |     6: _('num_layers', 50)    |
-|              |        |         |     7:                        |
+|              |        |         | ==> 3: _("num_channels", 128) |
+|              |        |         |     4: _("num_layers", 50)    |
+|              |        |         |     5:                        |
 +--------------+--------+---------+-------------------------------+
 | num_layers   | int    |     101 | occurrence[0]:                |
-|              |        |         |   src.py:6                    |
-|              |        |         |     1: #!/usr/bin/env python3 |
+|              |        |         |   src.py:4                    |
+|              |        |         |     1: from hpman.m import _  |
 |              |        |         |     2:                        |
-|              |        |         |     3: from hpman.m import _  |
-|              |        |         |     4:                        |
-|              |        |         |     5: _('num_channels', 128) |
-|              |        |         | ==> 6: _('num_layers', 50)    |
-|              |        |         |     7:                        |
+|              |        |         |     3: _("num_channels", 128) |
+|              |        |         | ==> 4: _("num_layers", 50)    |
+|              |        |         |     5:                        |
 +--------------+--------+---------+-------------------------------+
 $ hpcli src.py -h
 usage: hpcli [-h] [--num-channels NUM_CHANNELS] [--num-layers NUM_LAYERS]
