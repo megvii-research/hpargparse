@@ -165,7 +165,7 @@ This example lies in [examples/01-nn-training](./examples/01-nn-training).
 It is a fully-functional example of training a LeNet on MNIST using
 `hpargparse` and `hpman` collaboratively to manage hyperparameters.
 
-We **highly suggest* you playing around this example.
+We **highly suggest** you playing around this example.
 
 
 # Example: Basics Walkthrough

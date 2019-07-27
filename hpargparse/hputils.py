@@ -66,7 +66,7 @@ def make_detail_str(details):
 def make_value_illu(v):
     """Mute non-literal-evaluable values
 
-    :return: None if v is `class`:`hpman.NotLiteralEvaluable`,
+    :return: None if v is :class:`hpman.NotLiteralEvaluable`,
         otherwise the original input.
     """
     if isinstance(v, hpman.NotLiteralEvaluable):
@@ -118,7 +118,9 @@ def hp_list(mgr):
 
 def parse_action_list(inject_actions: Union[bool, List[str]]) -> List[str]:
     """Parse inputs to inject actions.
-    :param inject_actions: :see: `function`:`.bind` for detail
+
+    :param inject_actions: see :func:`.bind` for detail
+    :return: a list of action names
     """
     if isinstance(inject_actions, bool):
         inject_actions = {True: ["save", "load", "list"], False: []}[inject_actions]
@@ -151,7 +153,7 @@ def inject_args(
     inject_actions: List[str],
     action_prefix: str,
     serial_format: str
-):
+) -> argparse.ArgumentParser:
     """Inject hpman parsed hyperparameter settings into argparse arguments.
     Only a limited set of format are supported. See code for details.
 
@@ -162,7 +164,7 @@ def inject_args(
     :param action_prefix: prefix for hpargparse related options
     :param serial_format: one of 'yaml' and 'pickle'
 
-    :return: parser
+    :return: The injected parser.
     """
 
     # add options for collected hyper-parameters
@@ -254,7 +256,7 @@ def hp_save(path: str, hp_mgr: hpman.HyperParameterManager, serial_format: str):
     :param hp_mgr: The HyperParameterManager to be saved.
     :param serial_format: The saving format.
 
-    :see: `.bind` for more detail.
+    :see: :func:`.bind` for more detail.
     """
     values = hp_mgr.get_values()
 
@@ -277,7 +279,7 @@ def hp_load(path, hp_mgr, serial_format):
     :param hp_mgr: The HyperParameterManager to be set.
     :param serial_format: The saving format.
 
-    :see: `.bind` for more detail.
+    :see: :func:`.bind` for more detail.
     """
     if serial_format == "auto":
         serial_format = _infer_file_format(path)
@@ -323,7 +325,7 @@ def bind(
         'list'
     :param action_prefix: Prefix for options of hpargparse injected additional
         actions. e.g., the default action_prefix is 'hp'. Therefore, the
-        command line options added by `hpargparse.bind` will be '--hp-save',
+        command line options added by :func:`.bind` will be '--hp-save',
         '--hp-load', '--hp-list', etc.
     :param serial_format: One of 'auto', 'yaml' and 'pickle'. Defaults to
         'auto'.  In most cases you need not to alter this argument as long as
