@@ -17,7 +17,7 @@
 
 # -- Project information -----------------------------------------------------
 
-project = "hpman"
+project = "hpargparse"
 copyright = "2019, EMTF"
 author = "EMTF"
 
