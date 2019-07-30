@@ -23,7 +23,7 @@ def auto_cleanup_temp_dir():
         tmpdir = Path(tempfile.mkdtemp(prefix="hpargparse-test"))
         yield tmpdir
     finally:
-        shutil.rmtree(tmpdir)
+        shutil.rmtree(str(tmpdir))
 
 
 class TestAll(unittest.TestCase):
@@ -196,7 +196,7 @@ class TestAll(unittest.TestCase):
             path = d / "a.pkl"
             parser.parse_args(["--hp-save", str(path)])
 
-            with open(path, "rb") as f:
+            with open(str(path), "rb") as f:
                 x = pickle.load(f)
 
             self.assertEqual(x["a"], 1)
