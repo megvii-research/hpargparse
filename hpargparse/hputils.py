@@ -84,7 +84,7 @@ def hp_list(mgr):
     for k, d in sorted(mgr.db.group_by("name").items()):
         details = []
         for i, oc in enumerate(
-            d.select(L.exist_attr("filename")).sort(L.order_by("filename"))
+            d.select(L.exist_attr("filename")).sorted(L.order_by("filename"))
         ):
             # make context detail
             details.append(
@@ -98,7 +98,7 @@ def hp_list(mgr):
 
         # combine details
         detail_str = make_detail_str(details)
-        oc = d.sort(L.value_priority)[0]
+        oc = d.sorted(L.value_priority)[0]
         row = {
             "name": k,
             "type": type(oc.value).__name__,
