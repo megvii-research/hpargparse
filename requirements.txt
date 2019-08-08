@@ -1,4 +1,4 @@
 tabulate
 dill
-hpman
+hpman>=0.0.6
 PyYAML

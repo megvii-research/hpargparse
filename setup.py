@@ -8,7 +8,7 @@ with open("requirements.txt") as f:
 
 setuptools.setup(
     name="hpargparse",
-    version="0.0.4",
+    version="0.0.5",
     author="EMTF",
     author_email="emtf@megvii.com",
     description="An argparse extension for hpman",
