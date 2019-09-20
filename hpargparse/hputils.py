@@ -129,6 +129,7 @@ def parse_action_list(inject_actions: Union[bool, List[str]]) -> List[str]:
 
 def _get_argument_type_by_value(value):
     typ = type(value)
+    print('@get_type:', typ)
     if isinstance(value, (list, dict)):
 
         def type_func(s):
@@ -145,6 +146,19 @@ def _get_argument_type_by_value(value):
         return type_func
     return typ
 
+def str2bool(v):
+    """Parsing a string into a bool type.
+
+    :param v: A string that needs to be parsed.
+
+    :return: True or False
+    """
+    if v.lower() in ['yes', 'true', 't', 'y', '1']:
+        return True
+    elif v.lower() in ['no', 'false', 'f', 'n', '0']:
+        return False
+    else:
+        raise argparse.ArgumentTypeError('Unsupported value encountered.')
 
 def inject_args(
     parser: argparse.ArgumentParser,
@@ -171,9 +185,15 @@ def inject_args(
     for k, v in hp_mgr.get_values().items():
         # this is just a simple hack
         option_name = "--{}".format(k.replace("_", "-"))
-        parser.add_argument(
-            option_name, type=_get_argument_type_by_value(v), default=EmptyValue()
-        )
+        if _get_argument_type_by_value(v) == bool:
+            # argparse does not directly support bool types.
+            parser.add_argument(
+                option_name, type=str2bool, default=EmptyValue(),
+            )
+        else:
+            parser.add_argument(
+                option_name, type=_get_argument_type_by_value(v), default=EmptyValue()
+            )
 
     make_option = lambda name: "--{}-{}".format(action_prefix, name)
 
