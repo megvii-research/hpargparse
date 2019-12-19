@@ -131,7 +131,9 @@ class TestAll(unittest.TestCase):
 
     def _make_pair(self):
         hp_mgr = hpman.HyperParameterManager("_")
-        parser = argparse.ArgumentParser()
+        parser = argparse.ArgumentParser(
+            formatter_class=argparse.ArgumentDefaultsHelpFormatter
+        )
         hp_mgr.parse_source('_("a", 1)')
         return hp_mgr, parser
 
@@ -200,3 +202,14 @@ class TestAll(unittest.TestCase):
                 x = pickle.load(f)
 
             self.assertEqual(x["a"], 1)
+
+    def test_show_default_value_in_help_message(self):
+        hp_mgr, parser = self._make_pair()
+        hp_mgr.parse_source("_('b', True)")
+        hp_mgr.parse_source("_('c', 'deadbeef')")
+        hpargparse.bind(parser, hp_mgr)
+
+        h = parser.format_help()
+        self.assertRegex(h, "default: 1")
+        self.assertRegex(h, "default: True")
+        self.assertRegex(h, "default: deadbeef")

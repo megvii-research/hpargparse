@@ -129,7 +129,7 @@ def parse_action_list(inject_actions: Union[bool, List[str]]) -> List[str]:
 
 def _get_argument_type_by_value(value):
     typ = type(value)
-    print('@get_type:', typ)
+    print("@get_type:", typ)
     if isinstance(value, (list, dict)):
 
         def type_func(s):
@@ -146,6 +146,7 @@ def _get_argument_type_by_value(value):
         return type_func
     return typ
 
+
 def str2bool(v):
     """Parsing a string into a bool type.
 
@@ -153,12 +154,13 @@ def str2bool(v):
 
     :return: True or False
     """
-    if v.lower() in ['yes', 'true', 't', 'y', '1']:
+    if v.lower() in ["yes", "true", "t", "y", "1"]:
         return True
-    elif v.lower() in ['no', 'false', 'f', 'n', '0']:
+    elif v.lower() in ["no", "false", "f", "n", "0"]:
         return False
     else:
-        raise argparse.ArgumentTypeError('Unsupported value encountered.')
+        raise argparse.ArgumentTypeError("Unsupported value encountered.")
+
 
 def inject_args(
     parser: argparse.ArgumentParser,
@@ -166,33 +168,47 @@ def inject_args(
     *,
     inject_actions: List[str],
     action_prefix: str,
-    serial_format: str
+    serial_format: str,
+    show_defaults: bool,
 ) -> argparse.ArgumentParser:
     """Inject hpman parsed hyperparameter settings into argparse arguments.
     Only a limited set of format are supported. See code for details.
 
     :param parser: Use given parser object of `class`:`argparse.ArgumentParser`.
-    :param hp_mgr: a `class`:`hpman.HyperParameterManager` object.
+    :param hp_mgr: A `class`:`hpman.HyperParameterManager` object.
 
     :param inject_actions: A list of actions names to inject
-    :param action_prefix: prefix for hpargparse related options
-    :param serial_format: one of 'yaml' and 'pickle'
+    :param action_prefix: Prefix for hpargparse related options
+    :param serial_format: One of 'yaml' and 'pickle'
+    :param show_defaults: Show default values
 
     :return: The injected parser.
     """
+
+    help = ""
+    if show_defaults:
+        parser.formatter_class = argparse.ArgumentDefaultsHelpFormatter
+
+        # Default value will be shown when using argparse.ArgumentDefaultsHelpFormatter
+        # only if a help message is present. This is the behavior of argparse.
+        help = " "
 
     # add options for collected hyper-parameters
     for k, v in hp_mgr.get_values().items():
         # this is just a simple hack
         option_name = "--{}".format(k.replace("_", "-"))
+
         if _get_argument_type_by_value(v) == bool:
             # argparse does not directly support bool types.
             parser.add_argument(
-                option_name, type=str2bool, default=EmptyValue(),
+                option_name, type=str2bool, default=v, help=help  # EmptyValue(),
             )
         else:
             parser.add_argument(
-                option_name, type=_get_argument_type_by_value(v), default=EmptyValue()
+                option_name,
+                type=_get_argument_type_by_value(v),
+                default=v,  # EmptyValue()
+                help=help,
             )
 
     make_option = lambda name: "--{}-{}".format(action_prefix, name)
@@ -331,7 +347,8 @@ def bind(
     *,
     inject_actions: Union[bool, List[str]] = True,
     action_prefix: str = config.HP_ACTION_PREFIX_DEFAULT,
-    serial_format: str = config.HP_SERIAL_FORMAT_DEFAULT
+    serial_format: str = config.HP_SERIAL_FORMAT_DEFAULT,
+    show_defaults: bool = True,
 ):
     """Bridging the gap between argparse and hpman. This is
         the most important method. Once bounded, hpargparse
@@ -352,6 +369,7 @@ def bind(
         you give the right file extension when using save and load action. To
         be specific, '.yaml' and '.yml' would be deemed as yaml format, and
         '.pickle' and '.pkl' would be seen as pickle format.
+    :param show_defaults: Show the default value in help messages.
 
     :note: pickle is done by `dill` to support pickling of more types.
     """
@@ -365,6 +383,7 @@ def bind(
         inject_actions=inject_actions,
         action_prefix=action_prefix,
         serial_format=serial_format,
+        show_defaults=show_defaults,
     )
 
     # hook parser.parse_args
