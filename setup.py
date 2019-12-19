@@ -1,4 +1,7 @@
 import setuptools
+from pathlib import Path
+
+BASE_DIR = Path(__file__).parent
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
@@ -6,9 +9,12 @@ with open("README.md", "r") as fh:
 with open("requirements.txt") as f:
     requirements = [line.strip() for line in f]
 
+pkginfo = {}
+exec((BASE_DIR / "hpargparse" / "pkginfo.py").read_text(), None, pkginfo)
+
 setuptools.setup(
     name="hpargparse",
-    version="0.0.5",
+    version=pkginfo["__version__"],
     author="EMTF",
     author_email="emtf@megvii.com",
     description="An argparse extension for hpman",
