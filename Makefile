@@ -1,7 +1,7 @@
 all:
 
 test:
-	pytest \
+	python3 -m pytest \
 	    --cov=hpargparse \
 	    --no-cov-on-fail \
 	    --cov-report=html:htmlcov \
