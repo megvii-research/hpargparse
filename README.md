@@ -347,12 +347,17 @@ b: 456
 
 # Development
 1. Install requirements:
-```
+```bash
 pip install -r requirements.dev.txt -r requirements.txt
 ```
 
-2. Install pre-commit hook
+2. Activate git commit template
+```bash
+git config commit.template .git-commit-template.txt
 ```
+
+3. Install pre-commit hook
+```bash
 pre-commit install
 ```
 
