@@ -1,6 +1,7 @@
 .vscode
 *.pyc
 __pycache__/
+.idea
 
 # vim swap file
 *.swp
