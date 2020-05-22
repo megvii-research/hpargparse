@@ -1,15 +1,17 @@
-image:
-    docker:
-        circleci/python:3.6.7-jessie
+default:
+  image: circleci/python:3.6.7-jessie
+
 style:
     script:
         - python3 -V
-        - pip install -r requirements.dev.txt --user
+        - pip3 install -r requirements.dev.txt --user
+        - export PATH=/home/circleci/.local/bin:$PATH
         - make style-check
 
 unittest:
     script:
-        - pip install -r requirements.dev.txt -r requirements.txt --user
+        - pip3 install -r requirements.dev.txt -r requirements.txt --user
+        - export PATH=/home/circleci/.local/bin:$PATH
         - make test
     artifacts:
         paths:
@@ -17,7 +19,8 @@ unittest:
 
 doc:
     script:
-        - pip install -r requirements.dev.txt --user
+        - pip3 install -r requirements.dev.txt --user
+        - export PATH=/home/circleci/.local/bin:$PATH
         - make doc
     artifacts:
         paths:
