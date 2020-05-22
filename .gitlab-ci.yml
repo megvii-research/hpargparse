@@ -1,5 +1,4 @@
-default:
-  image: circleci/python:3.6.7-jessie
+age: circleci/python:3.6.7-jessie
 
 style:
     script:
@@ -12,6 +11,8 @@ unittest:
     script:
         - pip3 install -r requirements.dev.txt -r requirements.txt --user
         - export PATH=/home/circleci/.local/bin:$PATH
+        - unzip hpman.zip
+        - pip install -e ./hpman --user
         - make test
     artifacts:
         paths:
