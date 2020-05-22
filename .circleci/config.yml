@@ -10,7 +10,7 @@ jobs:
             - python/load-cache
             - add_ssh_keys:
                 fingerprints:
-                    - "6c:c3:67:39:f5:9e:01:4e:53:49:14:a1:8a:8c:bd:52"
+                    - "3c:73:e4:c1:39:85:db:bd:8a:80:33:cf:da:52:71:08"
 
             # A hacky way to use the correct ssh key when cloning hpman
             # ref: https://discuss.circleci.com/t/multiple-deploy-keys-for-github/25658/11
