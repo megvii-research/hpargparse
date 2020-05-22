@@ -1,3 +1,6 @@
+image:
+    docker:
+        circleci/python:3.6.7-jessie
 style:
     script:
         - python3 -V
