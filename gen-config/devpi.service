@@ -1,0 +1,16 @@
+[Unit]
+Description=Devpi Server
+Requires=network-online.target
+After=network-online.target
+
+[Service]
+Restart=on-success
+# ExecStart:
+# - shall point to existing devpi-server executable
+# - shall not use the deprecated `--start`. We want the devpi-server to start in foreground
+ExecStart=/Library/Frameworks/Python.framework/Versions/3.7/bin/devpi-server 
+# set User according to user which is able to run the devpi-server
+User=tanxuehan
+
+[Install]
+WantedBy=multi-user.target
