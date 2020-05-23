@@ -21,7 +21,6 @@ unittest:
 doc:
     script:
         - pip3 install -r requirements.dev.txt --user
-        - export PATH=/home/circleci/.local/bin:$PATH
         - make doc
     artifacts:
         paths:
