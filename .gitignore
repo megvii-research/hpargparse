@@ -2,7 +2,7 @@
 *.pyc
 __pycache__/
 .idea
-
+/gen-config
 # vim swap file
 *.swp
 
