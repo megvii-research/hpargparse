@@ -1,0 +1,36 @@
+version: 2.1
+orbs:
+    python: circleci/python@0.2.1
+jobs:
+    build:
+        docker:
+            - image: circleci/python:3.6.7-jessie
+        steps:
+            - checkout
+            - python/load-cache
+            - add_ssh_keys:
+                fingerprints:
+                    - "3c:73:e4:c1:39:85:db:bd:8a:80:33:cf:da:52:71:08"
+
+            # A hacky way to use the correct ssh key when cloning hpman
+            # ref: https://discuss.circleci.com/t/multiple-deploy-keys-for-github/25658/11
+            - run: sed -i -e 's/Host github-megvii-research-circleci/&\n HostName github.com/g' ~/.ssh/config
+            - run:  # test against the latest version of hpman
+                command: |
+                    git clone git@github-megvii-research-circleci:megvii-research/hpman.git
+                    cd hpman
+                    pip install --user .
+            - run: pip install --user -r requirements.txt -r requirements.dev.txt
+            - python/save-cache
+            - run: make test
+            - store_test_results:
+                path: test-results
+            - store_artifacts:
+                path: test-results
+                destiation: tr1
+workflows:
+    version: 2
+
+    main:
+        jobs:
+            - build
