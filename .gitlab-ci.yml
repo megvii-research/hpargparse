@@ -12,7 +12,7 @@ unittest:
         - pip3 install -r requirements.dev.txt -r requirements.txt --user
         - export PATH=/home/circleci/.local/bin:$PATH
         - unzip hpman.zip
-        - pip install -e ./hpman --user
+        - pip3 install -e ./hpman --user
         - make test
     artifacts:
         paths:
