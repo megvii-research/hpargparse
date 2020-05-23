@@ -47,6 +47,7 @@ release:
         - unittest
         - doc
     script:
+        - pip3 install -r requirements.dev.txt --user
         - make wheel
         - devpi use "${DEVPI_URL}" 
         - devpi login "${DEVPI_LOGIN}" --password="${DEVPI_PASSWORD}" && devpi upload dist/*
