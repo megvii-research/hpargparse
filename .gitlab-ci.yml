@@ -26,8 +26,7 @@ doc:
     artifacts:
         paths:
             - docs/_build/html
-    only:
-        - master
+
 
 pages:
     stage: deploy
@@ -40,8 +39,7 @@ pages:
     artifacts:
         paths:
             - public
-    only:
-        - master
+
 
 release:
     stage: deploy
@@ -52,5 +50,4 @@ release:
         - make wheel
         - devpi use "${DEVPI_URL}" 
         - devpi login "${DEVPI_LOGIN}" --password="${DEVPI_PASSWORD}" && devpi upload dist/*
-    only:
-        - tags
+
