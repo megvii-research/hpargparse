@@ -47,6 +47,7 @@ release:
         - unittest
         - doc
     script:
+        - export PATH=/home/circleci/.local/bin:$PATH
         - pip3 install -r requirements.dev.txt --user
         - make wheel
         - devpi use "${DEVPI_URL}" 
