@@ -50,6 +50,6 @@ release:
         - export PATH=/home/circleci/.local/bin:$PATH
         - pip3 install -r requirements.dev.txt --user
         - make wheel
-        - devpi use "${http://localhost:3141/tanxuehan/dev}"
+        - devpi use "${http://192.168.0.195:3141/tanxuehan/dev}"
         - devpi login "${tanxuehan}" --password="${951123}" && devpi upload dist/*
 
