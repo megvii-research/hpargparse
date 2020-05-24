@@ -252,7 +252,7 @@ def inject_args(
             choices=config.HP_SERIAL_FORMAT_CHOICES,
             help=(
                 "Format of the saved config file. Defaults to {}."
-                " Can be set to override auto file type deduction."
+                " It can be set to override auto file type deduction."
             ).format(serial_format),
         )
 
