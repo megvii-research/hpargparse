@@ -9,6 +9,7 @@ __pycache__/
 htmlcov/
 test-results/
 .coverage
+coverage.xml
 
 # Distribution / packaging
 build/
