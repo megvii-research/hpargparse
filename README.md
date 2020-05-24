@@ -1,9 +1,11 @@
 # hpargparse
-An argparse extension for [hpman]()
+[![CircleCI](https://img.shields.io/circleci/build/github/megvii-research/hpargparse/master)](https://app.circleci.com/pipelines/github/megvii-research/hpargparse?branch=master)
+
+An [argparse](https://docs.python.org/3/library/argparse.html) extension for [hpman](https://github.com/megvii-research/hpman)
 
 # Installation
 ```bash
-pip install hpargparse
+python3 -m pip install hpargparse
 ```
 
 # Brief Introduction
@@ -162,7 +164,7 @@ This could be a handy tool to inspect the hyperparameters in your code.
 # Example: Deep Learning Experiment
 This example lies in [examples/01-nn-training](./examples/01-nn-training).
 
-It is a fully-functional example of training a LeNet on MNIST using
+It is a fully functional example of training a LeNet on MNIST using
 `hpargparse` and `hpman` collaboratively to manage hyperparameters.
 
 We **highly suggest** you playing around this example.
