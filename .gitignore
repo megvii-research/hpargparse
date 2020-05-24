@@ -7,6 +7,7 @@ __pycache__/
 
 # coverage report
 htmlcov/
+test-results/
 .coverage
 
 # Distribution / packaging
