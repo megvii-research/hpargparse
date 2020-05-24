@@ -129,7 +129,6 @@ def parse_action_list(inject_actions: Union[bool, List[str]]) -> List[str]:
 
 def _get_argument_type_by_value(value):
     typ = type(value)
-    print("@get_type:", typ)
     if isinstance(value, (list, dict)):
 
         def type_func(s):
