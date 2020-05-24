@@ -1,5 +1,6 @@
 # hpargparse
 [![CircleCI](https://img.shields.io/circleci/build/github/megvii-research/hpargparse/master)](https://app.circleci.com/pipelines/github/megvii-research/hpargparse?branch=master)
+[![codecov](https://img.shields.io/codecov/c/github/megvii-research/hpargparse)](https://codecov.io/gh/megvii-research/hpargparse)
 
 An [argparse](https://docs.python.org/3/library/argparse.html) extension for [hpman](https://github.com/megvii-research/hpman)
 

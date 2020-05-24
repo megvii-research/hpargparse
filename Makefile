@@ -1,19 +1,22 @@
 all:
 
 test:
+	mkdir test-results
 	python3 -m pytest \
 	    --cov=hpargparse \
 	    --no-cov-on-fail \
-	    --cov-report=html:htmlcov \
+	    --cov-report=html:test-results/htmlcov \
 	    --cov-report term \
 	    --doctest-modules \
+	    --junitxml=test-results/junit.xml \
 	    hpargparse tests
+	python3 -m coverage xml -o test-results/coverage.xml
 
 style-check:
 	black --diff --check .
 
 serve-coverage-report:
-	cd htmlcov && python3 -m http.server
+	cd test-results/htmlcov && python3 -m http.server
 
 wheel:
 	python3 setup.py sdist bdist_wheel
