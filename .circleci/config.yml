@@ -15,7 +15,6 @@ jobs:
                 path: test-results
             - store_artifacts:
                 path: test-results
-                destiation: tr1
             - run: bash <(curl -s https://codecov.io/bash)
 workflows:
     version: 2
