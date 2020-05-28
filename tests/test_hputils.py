@@ -130,19 +130,25 @@ class TestAll(unittest.TestCase):
         )
         self.assertDictEqual(hp_mgr.get_value("a"), {"key": 3})
         self.assertListEqual(hp_mgr.get_value("b"), [2, 3, 4])
-        self.assertListEqual(hp_mgr.get_value("c"), 45)
 
-    def test_hp_load_dict_and_list(self):
+    def test_hp_load_dict_and_list_with_cmd_set(self):
         parser, hp_mgr = self._make_dict_and_list()
         parser.parse_args(
             [
                 "an_arg_value",
                 "--hp-load",
                 str(test_file_dir / "dict_and_list" / "config.yaml"),
+                "--a",
+                '{"a": 1}',
+                "--b",
+                "[1, 2, 3]",
+                "--c",
+                "42",
             ]
         )
-        self.assertDictEqual(hp_mgr.get_value("a"), {"key": 3})
-        self.assertListEqual(hp_mgr.get_value("b"), [2, 3, 4])
+        self.assertDictEqual(hp_mgr.get_value("a"), {"a": 1})
+        self.assertListEqual(hp_mgr.get_value("b"), [1, 2, 3])
+        self.assertEqual(hp_mgr.get_value("c"), 42)
 
     def _make_pair(self):
         hp_mgr = hpman.HyperParameterManager("_")
