@@ -4,6 +4,7 @@ import sys
 import ast
 
 import argparse
+import functools
 import dill
 import yaml
 import os
@@ -192,6 +193,16 @@ def inject_args(
         # only if a help message is present. This is the behavior of argparse.
         help = " "
 
+    value_names_been_set = set()
+
+    def _make_value_names_been_set_injection(name, func):
+        @functools.wraps(func)
+        def wrapper(*args, **kwargs):
+            value_names_been_set.add(name)
+            return func(*args, **kwargs)
+
+        return wrapper
+
     # add options for collected hyper-parameters
     for k, v in hp_mgr.get_values().items():
         # this is just a simple hack
@@ -200,13 +211,18 @@ def inject_args(
         if _get_argument_type_by_value(v) == bool:
             # argparse does not directly support bool types.
             parser.add_argument(
-                option_name, type=str2bool, default=v, help=help  # EmptyValue(),
+                option_name,
+                type=_make_value_names_been_set_injection(k, str2bool),
+                default=v,
+                help=help,
             )
         else:
             parser.add_argument(
                 option_name,
-                type=_get_argument_type_by_value(v),
-                default=v,  # EmptyValue()
+                type=_make_value_names_been_set_injection(
+                    k, _get_argument_type_by_value(v)
+                ),
+                default=v,
                 help=help,
             )
 
@@ -261,6 +277,13 @@ def inject_args(
             action="store_true",
             help="process all hpargparse actions and quit",
         )
+
+    def __hpargparse_value_names_been_set(self):
+        return value_names_been_set
+
+    parser.__hpargparse_value_names_been_set = MethodType(
+        __hpargparse_value_names_been_set, parser
+    )
 
     return parser
 
@@ -328,16 +351,17 @@ def hp_load(path, hp_mgr, serial_format):
             values = dill.load(f)
 
     old_values = hp_mgr.get_values()
+    new_values = {}
     for k, v in values.items():
         if k in old_values:
             old_v = old_values[k]
             try:
-                _get_argument_type_by_value(old_v)(v)
+                new_values[k] = _get_argument_type_by_value(old_v)(v)
             except TypeError as e:
                 e.args = ("Error parsing hyperparameter `{}`".format(k),) + e.args
                 raise
 
-    hp_mgr.set_values(values)
+    hp_mgr.set_values(new_values)
 
 
 def bind(
@@ -376,7 +400,7 @@ def bind(
     # make action list to be injected
     inject_actions = parse_action_list(inject_actions)
 
-    inject_args(
+    args_set_getter = inject_args(
         parser,
         hp_mgr,
         inject_actions=inject_actions,
@@ -401,12 +425,12 @@ def bind(
             hp_load(load_value, hp_mgr, serial_format)
 
         # set hyperparameters set from command lines
-        for k, v in hp_mgr.get_values().items():
-            if hasattr(args, k):
-                t = getattr(args, k)
-                if isinstance(t, EmptyValue):
-                    continue
-                hp_mgr.set_value(k, t)
+        old_values = hp_mgr.get_values()
+        for k in self.__hpargparse_value_names_been_set():
+            v = old_values[k]
+            assert hasattr(args, k)
+            t = getattr(args, k)
+            hp_mgr.set_value(k, t)
 
         save_value = get_action_value("save")
         if "save" in inject_actions and save_value is not None:
