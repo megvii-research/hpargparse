@@ -437,17 +437,18 @@ def bind(
         if "save" in inject_actions and save_value is not None:
             hp_save(save_value, hp_mgr, serial_format)
 
-        if "list" in inject_actions and args.hp_list:
+        if "list" in inject_actions:
             hp_list_value = get_action_value("list")
-            if hp_list_value == "yaml":
-                print(yaml.dump(hp_mgr.get_values()), end="")
-            elif hp_list_value == "json":
-                print(json.dumps(hp_mgr.get_values()))
-            else:
-                assert args.hp_list == "detail", args.hp_list
-                hp_list(hp_mgr)
+            if hp_list_value:
+                if hp_list_value == "yaml":
+                    print(yaml.dump(hp_mgr.get_values()), end="")
+                elif hp_list_value == "json":
+                    print(json.dumps(hp_mgr.get_values()))
+                else:
+                    assert hp_list_value == "detail", hp_list_value
+                    hp_list(hp_mgr)
 
-            sys.exit(0)
+                sys.exit(0)
 
         if inject_actions and get_action_value("exit"):
             sys.exit(0)
