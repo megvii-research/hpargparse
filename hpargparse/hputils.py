@@ -7,6 +7,7 @@ import argparse
 import functools
 import dill
 import yaml
+import json
 import os
 from copy import deepcopy
 
@@ -236,7 +237,7 @@ def inject_args(
                 default=False,
                 const="yaml",
                 nargs="?",
-                choices=["detail", "yaml"],
+                choices=["detail", "yaml", "json"],
                 help=(
                     "List all available hyperparameters. If `{} detail` is"
                     " specified, a verbose table will be print"
@@ -437,8 +438,11 @@ def bind(
             hp_save(save_value, hp_mgr, serial_format)
 
         if "list" in inject_actions and args.hp_list:
-            if args.hp_list == "yaml":
+            hp_list_value = get_action_value("list")
+            if hp_list_value == "yaml":
                 print(yaml.dump(hp_mgr.get_values()), end="")
+            elif hp_list_value == "json":
+                print(json.dumps(hp_mgr.get_values()))
             else:
                 assert args.hp_list == "detail", args.hp_list
                 hp_list(hp_mgr)
