@@ -1,7 +1,7 @@
 all:
 
 test:
-	mkdir test-results
+	mkdir -p test-results
 	python3 -m pytest \
 	    --cov=hpargparse \
 	    --no-cov-on-fail \
