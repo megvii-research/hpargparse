@@ -125,7 +125,9 @@ def parse_action_list(inject_actions: Union[bool, List[str]]) -> List[str]:
     :return: a list of action names
     """
     if isinstance(inject_actions, bool):
-        inject_actions = {True: ["save", "load", "list"], False: []}[inject_actions]
+        inject_actions = {True: ["save", "load", "list", "detail"], False: []}[
+            inject_actions
+        ]
     return inject_actions
 
 
@@ -234,7 +236,7 @@ def inject_args(
             parser.add_argument(
                 make_option("list"),
                 action="store",
-                default=False,
+                default=None,
                 const="yaml",
                 nargs="?",
                 choices=["detail", "yaml", "json"],
@@ -242,6 +244,12 @@ def inject_args(
                     "List all available hyperparameters. If `{} detail` is"
                     " specified, a verbose table will be print"
                 ).format(make_option("list")),
+            )
+        elif action == "detail":
+            parser.add_argument(
+                make_option("detail"),
+                action="store_true",
+                help="Shorthand for --hp-list detail",
             )
         elif action == "save":
             parser.add_argument(
@@ -437,18 +445,22 @@ def bind(
         if "save" in inject_actions and save_value is not None:
             hp_save(save_value, hp_mgr, serial_format)
 
-        if "list" in inject_actions:
-            hp_list_value = get_action_value("list")
-            if hp_list_value:
-                if hp_list_value == "yaml":
-                    print(yaml.dump(hp_mgr.get_values()), end="")
-                elif hp_list_value == "json":
-                    print(json.dumps(hp_mgr.get_values()))
-                else:
-                    assert hp_list_value == "detail", hp_list_value
-                    hp_list(hp_mgr)
+        hp_list_value = get_action_value("list")
+        if "list" in inject_actions and hp_list_value is not None:
+            if hp_list_value == "yaml":
+                print(yaml.dump(hp_mgr.get_values()), end="")
+            elif hp_list_value == "json":
+                print(json.dumps(hp_mgr.get_values()))
+            else:
+                assert hp_list_value == "detail", hp_list_value
+                hp_list(hp_mgr)
 
-                sys.exit(0)
+            sys.exit(0)
+
+        hp_detail_value = get_action_value("detail")
+        if "detail" in inject_actions and hp_detail_value:
+            hp_list(hp_mgr)
+            sys.exit(0)
 
         if inject_actions and get_action_value("exit"):
             sys.exit(0)
