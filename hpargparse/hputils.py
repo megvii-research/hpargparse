@@ -390,8 +390,8 @@ def bind(
     :param hp_mgr: The hyperparameter manager from `hpman`. It is
         usually an 'underscore' variable obtained by `from hpman.m import _`
     :param inject_actions: A list of actions names to inject, or True, to
-        inject all available actions. Available actions are 'save', 'load', and
-        'list'
+        inject all available actions. Available actions are 'save', 'load',
+        'detail' and 'list'
     :param action_prefix: Prefix for options of hpargparse injected additional
         actions. e.g., the default action_prefix is 'hp'. Therefore, the
         command line options added by :func:`.bind` will be '--hp-save',
