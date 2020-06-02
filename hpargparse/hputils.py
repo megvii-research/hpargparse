@@ -7,6 +7,7 @@ import argparse
 import functools
 import dill
 import yaml
+import json
 import os
 from copy import deepcopy
 
@@ -124,7 +125,9 @@ def parse_action_list(inject_actions: Union[bool, List[str]]) -> List[str]:
     :return: a list of action names
     """
     if isinstance(inject_actions, bool):
-        inject_actions = {True: ["save", "load", "list"], False: []}[inject_actions]
+        inject_actions = {True: ["save", "load", "list", "detail"], False: []}[
+            inject_actions
+        ]
     return inject_actions
 
 
@@ -233,14 +236,20 @@ def inject_args(
             parser.add_argument(
                 make_option("list"),
                 action="store",
-                default=False,
+                default=None,
                 const="yaml",
                 nargs="?",
-                choices=["detail", "yaml"],
+                choices=["detail", "yaml", "json"],
                 help=(
                     "List all available hyperparameters. If `{} detail` is"
                     " specified, a verbose table will be print"
                 ).format(make_option("list")),
+            )
+        elif action == "detail":
+            parser.add_argument(
+                make_option("detail"),
+                action="store_true",
+                help="Shorthand for --hp-list detail",
             )
         elif action == "save":
             parser.add_argument(
@@ -381,8 +390,8 @@ def bind(
     :param hp_mgr: The hyperparameter manager from `hpman`. It is
         usually an 'underscore' variable obtained by `from hpman.m import _`
     :param inject_actions: A list of actions names to inject, or True, to
-        inject all available actions. Available actions are 'save', 'load', and
-        'list'
+        inject all available actions. Available actions are 'save', 'load',
+        'detail' and 'list'
     :param action_prefix: Prefix for options of hpargparse injected additional
         actions. e.g., the default action_prefix is 'hp'. Therefore, the
         command line options added by :func:`.bind` will be '--hp-save',
@@ -436,13 +445,21 @@ def bind(
         if "save" in inject_actions and save_value is not None:
             hp_save(save_value, hp_mgr, serial_format)
 
-        if "list" in inject_actions and args.hp_list:
-            if args.hp_list == "yaml":
+        hp_list_value = get_action_value("list")
+        if "list" in inject_actions and hp_list_value is not None:
+            if hp_list_value == "yaml":
                 print(yaml.dump(hp_mgr.get_values()), end="")
+            elif hp_list_value == "json":
+                print(json.dumps(hp_mgr.get_values()))
             else:
-                assert args.hp_list == "detail", args.hp_list
+                assert hp_list_value == "detail", hp_list_value
                 hp_list(hp_mgr)
 
+            sys.exit(0)
+
+        hp_detail_value = get_action_value("detail")
+        if "detail" in inject_actions and hp_detail_value:
+            hp_list(hp_mgr)
             sys.exit(0)
 
         if inject_actions and get_action_value("exit"):

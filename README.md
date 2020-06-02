@@ -72,23 +72,31 @@ Details:
 +--------------+--------+---------+--------------------------------------------------------------+
 $ ./main.py -h
 usage: main.py [-h] [--weight-decay WEIGHT_DECAY] [--hp-save HP_SAVE]
-               [--hp-load HP_LOAD] [--hp-list [{detail,yaml}]]
-               [--hp-serial-format {auto,yaml,pickle}] [--hp-exit]
+               [--hp-load HP_LOAD] [--hp-list [{detail,yaml,json}]]
+               [--hp-detail] [--hp-serial-format {auto,yaml,pickle}]
+               [--hp-exit]
 
 optional arguments:
   -h, --help            show this help message and exit
   --weight-decay WEIGHT_DECAY
+                        (default: 1e-05)
   --hp-save HP_SAVE     Save hyperparameters to a file. The hyperparameters
                         are saved after processing of all other options
+                        (default: None)
   --hp-load HP_LOAD     Load hyperparameters from a file. The hyperparameters
                         are loaded before any other options are processed
-  --hp-list [{detail,yaml}]
+                        (default: None)
+  --hp-list [{detail,yaml,json}]
                         List all available hyperparameters. If `--hp-list
                         detail` is specified, a verbose table will be print
+                        (default: None)
+  --hp-detail           Shorthand for --hp-list detail (default: False)
   --hp-serial-format {auto,yaml,pickle}
-                        Format of the saved config file. Defaults to auto. Can
-                        be set to override auto file type deduction.
-  --hp-exit             process all hpargparse actions and quit
+                        Format of the saved config file. Defaults to auto. It
+                        can be set to override auto file type deduction.
+                        (default: auto)
+  --hp-exit             process all hpargparse actions and quit (default:
+                        False)
 ```
 
 # hpcli: The Command Line Tool
@@ -140,24 +148,32 @@ Details:
 $ hpcli src.py -h
 usage: hpcli [-h] [--num-channels NUM_CHANNELS] [--num-layers NUM_LAYERS]
              [--hp-save HP_SAVE] [--hp-load HP_LOAD]
-             [--hp-list [{detail,yaml}]]
+             [--hp-list [{detail,yaml,json}]] [--hp-detail]
              [--hp-serial-format {auto,yaml,pickle}] [--hp-exit]
 
 optional arguments:
   -h, --help            show this help message and exit
   --num-channels NUM_CHANNELS
+                        (default: 128)
   --num-layers NUM_LAYERS
+                        (default: 50)
   --hp-save HP_SAVE     Save hyperparameters to a file. The hyperparameters
                         are saved after processing of all other options
+                        (default: None)
   --hp-load HP_LOAD     Load hyperparameters from a file. The hyperparameters
                         are loaded before any other options are processed
-  --hp-list [{detail,yaml}]
+                        (default: None)
+  --hp-list [{detail,yaml,json}]
                         List all available hyperparameters. If `--hp-list
                         detail` is specified, a verbose table will be print
+                        (default: yaml)
+  --hp-detail           Shorthand for --hp-list detail (default: False)
   --hp-serial-format {auto,yaml,pickle}
-                        Format of the saved config file. Defaults to auto. Can
-                        be set to override auto file type deduction.
-  --hp-exit             process all hpargparse actions and quit
+                        Format of the saved config file. Defaults to auto. It
+                        can be set to override auto file type deduction.
+                        (default: auto)
+  --hp-exit             process all hpargparse actions and quit (default:
+                        False)
 ```
 
 This could be a handy tool to inspect the hyperparameters in your code.
@@ -232,7 +248,7 @@ if __name__ == "__main__":
 ```bash
 $ ./main.py -h
 usage: main.py [-h] [--a A] [--b B] [--hp-save HP_SAVE] [--hp-load HP_LOAD]
-               [--hp-list [{detail,yaml}]]
+               [--hp-list [{detail,yaml,json}]] [--hp-detail]
                [--hp-serial-format {auto,yaml,pickle}] [--hp-exit]
                predefined_arg
 
@@ -241,18 +257,25 @@ positional arguments:
 
 optional arguments:
   -h, --help            show this help message and exit
-  --a A
-  --b B
+  --a A                 (default: 1)
+  --b B                 (default: 2)
   --hp-save HP_SAVE     Save hyperparameters to a file. The hyperparameters
                         are saved after processing of all other options
+                        (default: None)
   --hp-load HP_LOAD     Load hyperparameters from a file. The hyperparameters
                         are loaded before any other options are processed
-  --hp-list [{detail,yaml}]
+                        (default: None)
+  --hp-list [{detail,yaml,json}]
                         List all available hyperparameters. If `--hp-list
                         detail` is specified, a verbose table will be print
+                        (default: None)
+  --hp-detail           Shorthand for --hp-list detail (default: False)
   --hp-serial-format {auto,yaml,pickle}
-                        Format of the saved config file. Defaults to auto
-  --hp-exit             process all hpargparse actions and quit
+                        Format of the saved config file. Defaults to auto. It
+                        can be set to override auto file type deduction.
+                        (default: auto)
+  --hp-exit             process all hpargparse actions and quit (default:
+                        False)
 ```
 
 
