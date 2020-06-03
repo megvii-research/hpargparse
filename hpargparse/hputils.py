@@ -21,7 +21,6 @@ from hpman import (
     L,
     EmptyValue,
 )
-from tabulate import tabulate
 
 from . import config
 
@@ -32,19 +31,6 @@ from rich.table import Column, Table
 from rich.syntax import Syntax
 from rich import print
 from rich.emoji import Emoji
-
-
-def list_of_dict2tab(list_of_dict, headers):
-    """Convert "a list of dict" to "a list of list" that suitable
-    for table processing libraries (such as tabulate)
-
-    :params list_of_dict: input data
-    :params headers: a list of str, header items with order
-
-    :return: list of list of objects
-    """
-    rows = [[dct[h] for h in headers] for dct in list_of_dict]
-    return rows
 
 
 def make_detail_str(details):
