@@ -25,8 +25,13 @@ from tabulate import tabulate
 
 from . import config
 
-
 from typing import Union, List
+
+from rich.console import Console
+from rich.table import Column, Table
+from rich.syntax import Syntax
+from rich import print
+from rich.emoji import Emoji
 
 
 def list_of_dict2tab(list_of_dict, headers):
@@ -79,43 +84,44 @@ def make_value_illu(v):
 def hp_list(mgr):
     """Print hyperparameter settings to stdout
     """
-    print("All hyperparameters:")
-    print("    {}".format(sorted(mgr.get_values().keys())))
+    print('[bright_yellow]All hyperparameters:[/bright_yellow]')
+    syntax = Syntax("    {}".format(sorted(mgr.get_values().keys())),
+                    "python",
+                    theme="monokai")
+    console = Console()
+    console.print(syntax)
 
-    rows = []
+    console = Console()
+    table = Table(title='Details',
+                  title_style="blink bold green_yellow",
+                  show_header=True,
+                  header_style="bold magenta")
+    table.add_column("name", style='green_yellow', width=12)
+    table.add_column("type", style='light_steel_blue', width=12)
+    table.add_column("value", style='light_cyan1', width=12)
+    table.add_column("details :glowing_star:")
     for k, d in sorted(mgr.db.group_by("name").items()):
         details = []
         for i, oc in enumerate(
-            d.select(L.exist_attr("filename")).sorted(L.order_by("filename"))
-        ):
+                d.select(L.exist_attr("filename")).sorted(
+                    L.order_by("filename"))):
             # make context detail
-            details.append(
-                {
-                    "name": "occurrence[{}]".format(i),
-                    "detail": SourceHelper.format_given_filepath_and_lineno(
-                        oc.filename, oc.lineno
-                    ),
-                }
-            )
+            details.append({
+                "name":
+                    "occurrence[[{}]]".format(i),
+                "detail":
+                    SourceHelper.format_given_filepath_and_lineno(
+                        oc.filename, oc.lineno),
+            })
 
         # combine details
         detail_str = make_detail_str(details)
         oc = d.sorted(L.value_priority)[0]
-        row = {
-            "name": k,
-            "type": type(oc.value).__name__,
-            "value": make_value_illu(oc.value),
-            "details": detail_str,
-        }
+        detail_syntax = Syntax(detail_str, "python", theme="monokai")
+        table.add_row(k, str(type(oc.value).__name__),
+                      str(make_value_illu(oc.value)), detail_syntax)
 
-        rows.append(row)
-
-    headers = ["name", "type", "value", "details"]
-    data = list_of_dict2tab(rows, headers)
-
-    print("Details:")
-    s = tabulate(data, headers=headers, tablefmt="grid")
-    print(s)
+    console.print(table)
 
 
 def parse_action_list(inject_actions: Union[bool, List[str]]) -> List[str]:
@@ -125,9 +131,10 @@ def parse_action_list(inject_actions: Union[bool, List[str]]) -> List[str]:
     :return: a list of action names
     """
     if isinstance(inject_actions, bool):
-        inject_actions = {True: ["save", "load", "list", "detail"], False: []}[
-            inject_actions
-        ]
+        inject_actions = {
+            True: ["save", "load", "list", "detail"],
+            False: []
+        }[inject_actions]
     return inject_actions
 
 
@@ -143,7 +150,8 @@ def _get_argument_type_by_value(value):
                 eval_val = ast.literal_eval(s)
 
             if not isinstance(eval_val, typ):
-                raise TypeError("value `{}` is not of type {}".format(eval_val, typ))
+                raise TypeError("value `{}` is not of type {}".format(
+                    eval_val, typ))
             return eval_val
 
         return type_func
@@ -199,6 +207,7 @@ def inject_args(
     value_names_been_set = set()
 
     def _make_value_names_been_set_injection(name, func):
+
         @functools.wraps(func)
         def wrapper(*args, **kwargs):
             value_names_been_set.add(name)
@@ -223,8 +232,7 @@ def inject_args(
             parser.add_argument(
                 option_name,
                 type=_make_value_names_been_set_injection(
-                    k, _get_argument_type_by_value(v)
-                ),
+                    k, _get_argument_type_by_value(v)),
                 default=v,
                 help=help,
             )
@@ -240,10 +248,9 @@ def inject_args(
                 const="yaml",
                 nargs="?",
                 choices=["detail", "yaml", "json"],
-                help=(
-                    "List all available hyperparameters. If `{} detail` is"
-                    " specified, a verbose table will be print"
-                ).format(make_option("list")),
+                help=("List all available hyperparameters. If `{} detail` is"
+                      " specified, a verbose table will be print").format(
+                          make_option("list")),
             )
         elif action == "detail":
             parser.add_argument(
@@ -254,19 +261,15 @@ def inject_args(
         elif action == "save":
             parser.add_argument(
                 make_option("save"),
-                help=(
-                    "Save hyperparameters to a file. The hyperparameters"
-                    " are saved after processing of all other options"
-                ),
+                help=("Save hyperparameters to a file. The hyperparameters"
+                      " are saved after processing of all other options"),
             )
 
         elif action == "load":
             parser.add_argument(
                 make_option("load"),
-                help=(
-                    "Load hyperparameters from a file. The hyperparameters"
-                    " are loaded before any other options are processed"
-                ),
+                help=("Load hyperparameters from a file. The hyperparameters"
+                      " are loaded before any other options are processed"),
             )
 
     if "load" in inject_actions or "save" in inject_actions:
@@ -274,10 +277,9 @@ def inject_args(
             make_option("serial-format"),
             default=serial_format,
             choices=config.HP_SERIAL_FORMAT_CHOICES,
-            help=(
-                "Format of the saved config file. Defaults to {}."
-                " It can be set to override auto file type deduction."
-            ).format(serial_format),
+            help=("Format of the saved config file. Defaults to {}."
+                  " It can be set to override auto file type deduction."
+                 ).format(serial_format),
         )
 
     if inject_actions:
@@ -291,8 +293,7 @@ def inject_args(
         return value_names_been_set
 
     parser.__hpargparse_value_names_been_set = MethodType(
-        __hpargparse_value_names_been_set, parser
-    )
+        __hpargparse_value_names_been_set, parser)
 
     return parser
 
@@ -310,9 +311,8 @@ def _infer_file_format(path):
         return supported_exts[ext]
     raise ValueError(
         "Unsupported file extension: {} of path {}".format(ext, path),
-        "Supported file extensions: {}".format(
-            ", ".join("`{}`".format(i) for i in sorted(supported_exts))
-        ),
+        "Supported file extensions: {}".format(", ".join(
+            "`{}`".format(i) for i in sorted(supported_exts))),
     )
 
 
@@ -367,7 +367,8 @@ def hp_load(path, hp_mgr, serial_format):
             try:
                 new_values[k] = _get_argument_type_by_value(old_v)(v)
             except TypeError as e:
-                e.args = ("Error parsing hyperparameter `{}`".format(k),) + e.args
+                e.args = (
+                    "Error parsing hyperparameter `{}`".format(k),) + e.args
                 raise
 
     hp_mgr.set_values(new_values)
@@ -425,8 +426,7 @@ def bind(
         args = self._original_parse_args(*args, **kwargs)
 
         get_action_value = lambda name: getattr(
-            args, "{}_{}".format(action_prefix, name)
-        )
+            args, "{}_{}".format(action_prefix, name))
 
         # load saved hyperparameter instance
         load_value = get_action_value("load")
@@ -448,9 +448,18 @@ def bind(
         hp_list_value = get_action_value("list")
         if "list" in inject_actions and hp_list_value is not None:
             if hp_list_value == "yaml":
-                print(yaml.dump(hp_mgr.get_values()), end="")
+                syntax = Syntax(yaml.dump(hp_mgr.get_values()).replace(
+                    "\n\n", "\n"),
+                                "yaml",
+                                theme="monokai")
+                console = Console()
+                console.print(syntax)
             elif hp_list_value == "json":
-                print(json.dumps(hp_mgr.get_values()))
+                syntax = Syntax(json.dumps(hp_mgr.get_values()),
+                                "json",
+                                theme="monokai")
+                console = Console()
+                console.print(syntax)
             else:
                 assert hp_list_value == "detail", hp_list_value
                 hp_list(hp_mgr)
