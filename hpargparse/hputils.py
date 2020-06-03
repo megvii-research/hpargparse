@@ -29,8 +29,8 @@ from typing import Union, List
 from rich.console import Console
 from rich.table import Column, Table
 from rich.syntax import Syntax
-from rich import print
 from rich.emoji import Emoji
+from rich.style import Style
 
 
 def make_detail_str(details):
@@ -70,22 +70,28 @@ def make_value_illu(v):
 def hp_list(mgr):
     """Print hyperparameter settings to stdout
     """
-    print('[bright_yellow]All hyperparameters:[/bright_yellow]')
-    syntax = Syntax("    {}".format(sorted(mgr.get_values().keys())),
+
+    syntax = Syntax('All hyperparameters:\n' +
+                    "    {}".format(sorted(mgr.get_values().keys())),
                     "python",
                     theme="monokai")
     console = Console()
     console.print(syntax)
 
+    # construct a table
     console = Console()
     table = Table(title='Details',
-                  title_style="blink bold green_yellow",
+                  title_style=Style(color="bright_cyan",
+                                    bgcolor="grey15",
+                                    bold=True),
+                  style=Style(bgcolor="grey15"),
                   show_header=True,
                   header_style="bold magenta")
     table.add_column("name", style='green_yellow', width=12)
     table.add_column("type", style='light_steel_blue', width=12)
     table.add_column("value", style='light_cyan1', width=12)
     table.add_column("details :glowing_star:")
+
     for k, d in sorted(mgr.db.group_by("name").items()):
         details = []
         for i, oc in enumerate(
@@ -94,10 +100,10 @@ def hp_list(mgr):
             # make context detail
             details.append({
                 "name":
-                    "occurrence[[{}]]".format(i),
+                "occurrence[[{}]]".format(i),
                 "detail":
-                    SourceHelper.format_given_filepath_and_lineno(
-                        oc.filename, oc.lineno),
+                SourceHelper.format_given_filepath_and_lineno(
+                    oc.filename, oc.lineno),
             })
 
         # combine details
@@ -193,7 +199,6 @@ def inject_args(
     value_names_been_set = set()
 
     def _make_value_names_been_set_injection(name, func):
-
         @functools.wraps(func)
         def wrapper(*args, **kwargs):
             value_names_been_set.add(name)
@@ -265,7 +270,7 @@ def inject_args(
             choices=config.HP_SERIAL_FORMAT_CHOICES,
             help=("Format of the saved config file. Defaults to {}."
                   " It can be set to override auto file type deduction."
-                 ).format(serial_format),
+                  ).format(serial_format),
         )
 
     if inject_actions:
@@ -302,7 +307,8 @@ def _infer_file_format(path):
     )
 
 
-def hp_save(path: str, hp_mgr: hpman.HyperParameterManager, serial_format: str):
+def hp_save(path: str, hp_mgr: hpman.HyperParameterManager,
+            serial_format: str):
     """Save(serialize) hyperparamters.
 
     :param path: Where to save
@@ -354,7 +360,7 @@ def hp_load(path, hp_mgr, serial_format):
                 new_values[k] = _get_argument_type_by_value(old_v)(v)
             except TypeError as e:
                 e.args = (
-                    "Error parsing hyperparameter `{}`".format(k),) + e.args
+                    "Error parsing hyperparameter `{}`".format(k), ) + e.args
                 raise
 
     hp_mgr.set_values(new_values)
