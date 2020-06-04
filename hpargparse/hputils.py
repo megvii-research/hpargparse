@@ -31,6 +31,7 @@ from rich.table import Column, Table
 from rich.syntax import Syntax
 from rich.emoji import Emoji
 from rich.style import Style
+from rich import box
 
 
 def make_detail_str(details):
@@ -42,7 +43,6 @@ def make_detail_str(details):
     """
     strs = []
     for d in details:
-
         if isinstance(d["detail"], str):
             ds = [d["detail"]]
         else:
@@ -85,8 +85,10 @@ def hp_list(mgr):
                                     bgcolor="grey15",
                                     bold=True),
                   style=Style(bgcolor="grey15"),
-                  show_header=True,
-                  header_style="bold magenta")
+                  header_style="bold magenta",
+                  box=box.DOUBLE,
+                  border_style="bright_cyan",
+                  show_lines=True)
     table.add_column("name", style='green_yellow', width=12)
     table.add_column("type", style='light_steel_blue', width=12)
     table.add_column("value", style='light_cyan1', width=12)
@@ -100,7 +102,7 @@ def hp_list(mgr):
             # make context detail
             details.append({
                 "name":
-                "occurrence[[{}]]".format(i),
+                "occurrence[{}]".format(i),
                 "detail":
                 SourceHelper.format_given_filepath_and_lineno(
                     oc.filename, oc.lineno),
