@@ -29,7 +29,6 @@ from typing import Union, List
 from rich.console import Console
 from rich.table import Column, Table
 from rich.syntax import Syntax
-from rich.emoji import Emoji
 from rich.style import Style
 from rich import box
 
@@ -89,10 +88,10 @@ def hp_list(mgr):
                   box=box.DOUBLE,
                   border_style="bright_cyan",
                   show_lines=True)
-    table.add_column("name", style='green_yellow', width=12)
-    table.add_column("type", style='light_steel_blue', width=12)
-    table.add_column("value", style='light_cyan1', width=12)
-    table.add_column("details :glowing_star:")
+    table.add_column("name", style='green_yellow')
+    table.add_column("type", style='light_steel_blue')
+    table.add_column("value", style='light_cyan1')
+    table.add_column("details")
 
     for k, d in sorted(mgr.db.group_by("name").items()):
         details = []
