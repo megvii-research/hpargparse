@@ -39,6 +39,9 @@ class TestAll(unittest.TestCase):
     def _make_basic(self):
         return self._make(test_file_dir / "basic" / "lib.py")
 
+    def _make_str(self):
+        return self._make(test_file_dir / "basic" / "str.py")
+
     def _make_dict_and_list(self):
         return self._make(test_file_dir / "dict_and_list" / "lib_dict_and_list.py")
 
@@ -65,10 +68,12 @@ class TestAll(unittest.TestCase):
         self.assertRaises(
             SystemExit, parser.parse_args, ["an_arg_value", "--hp-list", "json"]
         )
-    
+
     def test_hp_detail(self):
         parser, hp_mgr = self._make_basic()
-        self.assertRaises(SystemExit, parser.parse_args, ["an_arg_value", "--hp-detail"])
+        self.assertRaises(
+            SystemExit, parser.parse_args, ["an_arg_value", "--hp-detail"]
+        )
 
     def test_hp_save(self):
         for name in ["config.yaml", "config.yml", "config.pkl", "config.pickle"]:
@@ -115,6 +120,27 @@ class TestAll(unittest.TestCase):
                 str(test_file_dir / "basic" / "config.failure.yaml"),
             ],
         )
+
+    def test_hp_load_str(self):
+        parser, hp_mgr = self._make_str()
+        self.assertEqual(hp_mgr.get_value("str_from"), "source_code")
+        parser.parse_args(
+            ["an_arg_value", "--hp-load", str(test_file_dir / "basic" / "str.yaml"),]
+        )
+        self.assertEqual(hp_mgr.get_value("str_from"), "yaml")
+
+    def test_hp_load_str_with_cmd_set(self):
+        parser, hp_mgr = self._make_str()
+        parser.parse_args(
+            [
+                "an_arg_value",
+                "--hp-load",
+                str(test_file_dir / "basic" / "str.yaml"),
+                "--str-from",
+                "cmd",
+            ]
+        )
+        self.assertEqual(hp_mgr.get_value("str_from"), "cmd")
 
     def test_set_dict_and_list(self):
         parser, hp_mgr = self._make_dict_and_list()
