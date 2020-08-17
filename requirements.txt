@@ -1,4 +1,4 @@
-tabulate
+rich
 dill
 hpman>=0.0.6
 PyYAML

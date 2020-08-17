@@ -50,26 +50,26 @@ weight decay is 0.0001
 $ ./main.py --weight-decay 1e-4 --hp-list
 weight_decay: 0.0001
 $ ./main.py --weight-decay 1e-4 --hp-list detail
-All hyperparameters:
-    ['weight_decay']
-Details:
-+--------------+--------+---------+--------------------------------------------------------------+
-| name         | type   |   value | details                                                      |
-+==============+========+=========+==============================================================+
-| weight_decay | float  |  0.0001 | occurrence[0]:                                               |
-|              |        |         |   ./main.py:10                                               |
-|              |        |         |      5:                                                      |
-|              |        |         |      6: import argparse                                      |
-|              |        |         |      7:                                                      |
-|              |        |         |      8:                                                      |
-|              |        |         |      9: def func():                                          |
-|              |        |         | ==> 10:     weight_decay = _("weight_decay", 1e-5)           |
-|              |        |         |     11:     print("weight decay is {}".format(weight_decay)) |
-|              |        |         |     12:                                                      |
-|              |        |         |     13:                                                      |
-|              |        |         |     14: def main():                                          |
-|              |        |         |     15:     parser = argparse.ArgumentParser()               |
-+--------------+--------+---------+--------------------------------------------------------------+
+All hyperparameters:                                                                               
+    ['weight_decay']                                                                               
+                                              Details                                              
+╔══════════════╦═══════╦════════╦═════════════════════════════════════════════════════════════════╗
+║ name         ║ type  ║ value  ║ details                                                         ║
+╠══════════════╬═══════╬════════╬═════════════════════════════════════════════════════════════════╣
+║ weight_decay ║ float ║ 0.0001 ║ occurrence[0]:                                                  ║
+║              ║       ║        ║   ./main.py:10                                                  ║
+║              ║       ║        ║      5:                                                         ║
+║              ║       ║        ║      6: import argparse                                         ║
+║              ║       ║        ║      7:                                                         ║
+║              ║       ║        ║      8:                                                         ║
+║              ║       ║        ║      9: def func():                                             ║
+║              ║       ║        ║ ==> 10:     weight_decay = _("weight_decay", 1e-5)              ║
+║              ║       ║        ║     11:     print("weight decay is {}".format(weight_decay))    ║
+║              ║       ║        ║     12:                                                         ║
+║              ║       ║        ║     13:                                                         ║
+║              ║       ║        ║     14: def main():                                             ║
+║              ║       ║        ║     15:     parser = argparse.ArgumentParser()                  ║
+╚══════════════╩═══════╩════════╩═════════════════════════════════════════════════════════════════╝
 $ ./main.py -h
 usage: main.py [-h] [--weight-decay WEIGHT_DECAY] [--hp-save HP_SAVE]
                [--hp-load HP_LOAD] [--hp-list [{detail,yaml,json}]]
@@ -123,28 +123,28 @@ $ hpcli src.py --num-layers 101 --hp-save config.yaml
 num_channels: 128
 num_layers: 101
 $ hpcli src.py --num-layers 101 --hp-save config.yaml --hp-list detail
-All hyperparameters:
-    ['num_channels', 'num_layers']
-Details:
-+--------------+--------+---------+-------------------------------+
-| name         | type   |   value | details                       |
-+==============+========+=========+===============================+
-| num_channels | int    |     128 | occurrence[0]:                |
-|              |        |         |   src.py:3                    |
-|              |        |         |     1: from hpman.m import _  |
-|              |        |         |     2:                        |
-|              |        |         | ==> 3: _("num_channels", 128) |
-|              |        |         |     4: _("num_layers", 50)    |
-|              |        |         |     5:                        |
-+--------------+--------+---------+-------------------------------+
-| num_layers   | int    |     101 | occurrence[0]:                |
-|              |        |         |   src.py:4                    |
-|              |        |         |     1: from hpman.m import _  |
-|              |        |         |     2:                        |
-|              |        |         |     3: _("num_channels", 128) |
-|              |        |         | ==> 4: _("num_layers", 50)    |
-|              |        |         |     5:                        |
-+--------------+--------+---------+-------------------------------+
+All hyperparameters:                                                   
+    ['num_channels', 'num_layers']                                     
+                                Details                                
+╔══════════════╦══════╦═══════╦═══════════════════════════════════════╗
+║ name         ║ type ║ value ║ details                               ║
+╠══════════════╬══════╬═══════╬═══════════════════════════════════════╣
+║ num_channels ║ int  ║ 128   ║ occurrence[0]:                        ║
+║              ║      ║       ║   src.py:3                            ║
+║              ║      ║       ║     1: from hpman.m import _          ║
+║              ║      ║       ║     2:                                ║
+║              ║      ║       ║ ==> 3: _("num_channels", 128)         ║
+║              ║      ║       ║     4: _("num_layers", 50)            ║
+║              ║      ║       ║     5:                                ║
+╠══════════════╬══════╬═══════╬═══════════════════════════════════════╣
+║ num_layers   ║ int  ║ 101   ║ occurrence[0]:                        ║
+║              ║      ║       ║   src.py:4                            ║
+║              ║      ║       ║     1: from hpman.m import _          ║
+║              ║      ║       ║     2:                                ║
+║              ║      ║       ║     3: _("num_channels", 128)         ║
+║              ║      ║       ║ ==> 4: _("num_layers", 50)            ║
+║              ║      ║       ║     5:                                ║
+╚══════════════╩══════╩═══════╩═══════════════════════════════════════╝
 $ hpcli src.py -h
 usage: hpcli [-h] [--num-channels NUM_CHANNELS] [--num-layers NUM_LAYERS]
              [--hp-save HP_SAVE] [--hp-load HP_LOAD]
@@ -298,58 +298,58 @@ b: 2
 ... and details:
 ```bash
 $ ./main.py some_arg --hp-list detail
-All hyperparameters:
-    ['a', 'b']
-Details:
-+--------+--------+---------+----------------------------------------------------------------+
-| name   | type   |   value | details                                                        |
-+========+========+=========+================================================================+
-| a      | int    |       1 | occurrence[0]:                                                 |
-|        |        |         |   /data/project/hpargparse/examples/00-basic/lib.py:8          |
-|        |        |         |      3: # for more usecases, please refer to hpman's document  |
-|        |        |         |      4:                                                        |
-|        |        |         |      5:                                                        |
-|        |        |         |      6: def add():                                             |
-|        |        |         |      7:     # define a hyperparameter on-the-fly with defaults |
-|        |        |         | ==>  8:     return _("a", 1) + _("b", 2)                       |
-|        |        |         |      9:                                                        |
-|        |        |         |     10:                                                        |
-|        |        |         |     11: def mult():                                            |
-|        |        |         |     12:     # reuse a pre-defined hyperparameters              |
-|        |        |         |     13:     return _("a") * _("b")                             |
-|        |        |         | occurrence[1]:                                                 |
-|        |        |         |   /data/project/hpargparse/examples/00-basic/lib.py:13         |
-|        |        |         |      8:     return _("a", 1) + _("b", 2)                       |
-|        |        |         |      9:                                                        |
-|        |        |         |     10:                                                        |
-|        |        |         |     11: def mult():                                            |
-|        |        |         |     12:     # reuse a pre-defined hyperparameters              |
-|        |        |         | ==> 13:     return _("a") * _("b")                             |
-|        |        |         |     14:                                                        |
-+--------+--------+---------+----------------------------------------------------------------+
-| b      | int    |       2 | occurrence[0]:                                                 |
-|        |        |         |   /data/project/hpargparse/examples/00-basic/lib.py:8          |
-|        |        |         |      3: # for more usecases, please refer to hpman's document  |
-|        |        |         |      4:                                                        |
-|        |        |         |      5:                                                        |
-|        |        |         |      6: def add():                                             |
-|        |        |         |      7:     # define a hyperparameter on-the-fly with defaults |
-|        |        |         | ==>  8:     return _("a", 1) + _("b", 2)                       |
-|        |        |         |      9:                                                        |
-|        |        |         |     10:                                                        |
-|        |        |         |     11: def mult():                                            |
-|        |        |         |     12:     # reuse a pre-defined hyperparameters              |
-|        |        |         |     13:     return _("a") * _("b")                             |
-|        |        |         | occurrence[1]:                                                 |
-|        |        |         |   /data/project/hpargparse/examples/00-basic/lib.py:13         |
-|        |        |         |      8:     return _("a", 1) + _("b", 2)                       |
-|        |        |         |      9:                                                        |
-|        |        |         |     10:                                                        |
-|        |        |         |     11: def mult():                                            |
-|        |        |         |     12:     # reuse a pre-defined hyperparameters              |
-|        |        |         | ==> 13:     return _("a") * _("b")                             |
-|        |        |         |     14:                                                        |
-+--------+--------+---------+----------------------------------------------------------------+
+All hyperparameters:                                                                               
+    ['a', 'b']                                                                                     
+                                              Details                                              
+╔══════╦══════╦═══════╦═══════════════════════════════════════════════════════════════════════════╗
+║ name ║ type ║ value ║ details                                                                   ║
+╠══════╬══════╬═══════╬═══════════════════════════════════════════════════════════════════════════╣
+║ a    ║ int  ║ 1     ║ occurrence[0]:                                                            ║
+║      ║      ║       ║   /data/project/hpargparse/examples/00-basic/lib.py:8                     ║
+║      ║      ║       ║      3: # for more usecases, please refer to hpman's document             ║
+║      ║      ║       ║      4:                                                                   ║
+║      ║      ║       ║      5:                                                                   ║
+║      ║      ║       ║      6: def add():                                                        ║
+║      ║      ║       ║      7:     # define a hyperparameter on-the-fly with defaults            ║
+║      ║      ║       ║ ==>  8:     return _("a", 1) + _("b", 2)                                  ║
+║      ║      ║       ║      9:                                                                   ║
+║      ║      ║       ║     10:                                                                   ║
+║      ║      ║       ║     11: def mult():                                                       ║
+║      ║      ║       ║     12:     # reuse a pre-defined hyperparameters                         ║
+║      ║      ║       ║     13:     return _("a") * _("b")                                        ║
+║      ║      ║       ║ occurrence[1]:                                                            ║
+║      ║      ║       ║   /data/project/hpargparse/examples/00-basic/lib.py:13                    ║
+║      ║      ║       ║      8:     return _("a", 1) + _("b", 2)                                  ║
+║      ║      ║       ║      9:                                                                   ║
+║      ║      ║       ║     10:                                                                   ║
+║      ║      ║       ║     11: def mult():                                                       ║
+║      ║      ║       ║     12:     # reuse a pre-defined hyperparameters                         ║
+║      ║      ║       ║ ==> 13:     return _("a") * _("b")                                        ║
+║      ║      ║       ║     14:                                                                   ║
+╠══════╬══════╬═══════╬═══════════════════════════════════════════════════════════════════════════╣
+║ b    ║ int  ║ 2     ║ occurrence[0]:                                                            ║
+║      ║      ║       ║   /data/project/hpargparse/examples/00-basic/lib.py:8                     ║
+║      ║      ║       ║      3: # for more usecases, please refer to hpman's document             ║
+║      ║      ║       ║      4:                                                                   ║
+║      ║      ║       ║      5:                                                                   ║
+║      ║      ║       ║      6: def add():                                                        ║
+║      ║      ║       ║      7:     # define a hyperparameter on-the-fly with defaults            ║
+║      ║      ║       ║ ==>  8:     return _("a", 1) + _("b", 2)                                  ║
+║      ║      ║       ║      9:                                                                   ║
+║      ║      ║       ║     10:                                                                   ║
+║      ║      ║       ║     11: def mult():                                                       ║
+║      ║      ║       ║     12:     # reuse a pre-defined hyperparameters                         ║
+║      ║      ║       ║     13:     return _("a") * _("b")                                        ║
+║      ║      ║       ║ occurrence[1]:                                                            ║
+║      ║      ║       ║   /data/project/hpargparse/examples/00-basic/lib.py:13                    ║
+║      ║      ║       ║      8:     return _("a", 1) + _("b", 2)                                  ║
+║      ║      ║       ║      9:                                                                   ║
+║      ║      ║       ║     10:                                                                   ║
+║      ║      ║       ║     11: def mult():                                                       ║
+║      ║      ║       ║     12:     # reuse a pre-defined hyperparameters                         ║
+║      ║      ║       ║ ==> 13:     return _("a") * _("b")                                        ║
+║      ║      ║       ║     14:                                                                   ║
+╚══════╩══════╩═══════╩═══════════════════════════════════════════════════════════════════════════╝
 ```
 
 ## Save/Load from/to YAML file
