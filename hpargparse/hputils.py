@@ -26,11 +26,34 @@ from . import config
 
 from typing import Union, List
 
+
 from rich.console import Console
 from rich.table import Column, Table
 from rich.syntax import Syntax
 from rich.style import Style
 from rich import box
+
+
+class StringAsDefault(str):
+    """If a string is used as parser.add_argument(default=string),
+    this string should be mark as StringAsDefault
+    """
+
+    pass
+
+
+def list_of_dict2tab(list_of_dict, headers):
+    """Convert "a list of dict" to "a list of list" that suitable
+    for table processing libraries (such as tabulate)
+
+    :params list_of_dict: input data
+    :params headers: a list of str, header items with order
+
+    :return: list of list of objects
+    """
+    rows = [[dct[h] for h in headers] for dct in list_of_dict]
+    return rows
+
 
 
 def make_detail_str(details):
@@ -201,9 +224,13 @@ def inject_args(
 
     def _make_value_names_been_set_injection(name, func):
         @functools.wraps(func)
-        def wrapper(*args, **kwargs):
-            value_names_been_set.add(name)
-            return func(*args, **kwargs)
+        def wrapper(string):
+            # when isinstance(default, string),
+            # the `parser.parse_args()` will run type(default) automaticly.
+            # value_names_been_set should ignore these names.
+            if not isinstance(string, StringAsDefault):
+                value_names_been_set.add(name)
+            return func(string)
 
         return wrapper
 
@@ -221,6 +248,9 @@ def inject_args(
                 help=help,
             )
         else:
+            if isinstance(v, str):
+                # if isinstance(v, str), mark as StringAsDefault
+                v = StringAsDefault(v)
             parser.add_argument(
                 option_name,
                 type=_make_value_names_been_set_injection(
