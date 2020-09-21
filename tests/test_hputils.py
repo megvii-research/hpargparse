@@ -125,7 +125,7 @@ class TestAll(unittest.TestCase):
         parser, hp_mgr = self._make_str()
         self.assertEqual(hp_mgr.get_value("str_from"), "source_code")
         parser.parse_args(
-            ["an_arg_value", "--hp-load", str(test_file_dir / "basic" / "str.yaml"),]
+            ["an_arg_value", "--hp-load", str(test_file_dir / "basic" / "str.yaml")]
         )
         self.assertEqual(hp_mgr.get_value("str_from"), "yaml")
 
@@ -276,8 +276,8 @@ class TestAll(unittest.TestCase):
             formatter_class=argparse.ArgumentDefaultsHelpFormatter
         )
         subparsers = parser.add_subparsers()
-        p = subparsers.add_parser('sub')
+        p = subparsers.add_parser("sub")
         hpargparse.bind(p, hp_mgr)
-        parser.parse_args(['sub', "--a", str(2)])
+        parser.parse_args(["sub", "--a", str(2)])
 
-        self.assertEqual(2, hp_mgr.get_values()['a'])
+        self.assertEqual(2, hp_mgr.get_values()["a"])
