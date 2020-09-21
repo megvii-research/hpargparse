@@ -267,3 +267,17 @@ class TestAll(unittest.TestCase):
         self.assertRegex(h, "default: 1")
         self.assertRegex(h, "default: True")
         self.assertRegex(h, "default: deadbeef")
+
+    def test_subparser(self):
+        hp_mgr = hpman.HyperParameterManager("_")
+        hp_mgr.parse_source('_("a", 1)')
+
+        parser = argparse.ArgumentParser(
+            formatter_class=argparse.ArgumentDefaultsHelpFormatter
+        )
+        subparsers = parser.add_subparsers()
+        p = subparsers.add_parser('sub')
+        hpargparse.bind(p, hp_mgr)
+        parser.parse_args(['sub', "--a", str(2)])
+
+        self.assertEqual(2, hp_mgr.get_values()['a'])
