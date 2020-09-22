@@ -452,11 +452,11 @@ def bind(
         show_defaults=show_defaults,
     )
 
-    # hook parser.parse_args
-    parser._original_parse_args = parser.parse_args
+    # hook parser.parse_known_args
+    parser._original_parse_known_args = parser.parse_known_args
 
-    def new_parse_args(self, *args, **kwargs):
-        args = self._original_parse_args(*args, **kwargs)
+    def new_parse_known_args(self, *args, **kwargs):
+        args, extras = self._original_parse_known_args(*args, **kwargs)
 
         get_action_value = lambda name: getattr(
             args, "{}_{}".format(action_prefix, name)
@@ -509,6 +509,6 @@ def bind(
         if inject_actions and get_action_value("exit"):
             sys.exit(0)
 
-        return args
+        return args, extras
 
-    parser.parse_args = MethodType(new_parse_args, parser)
+    parser.parse_known_args = MethodType(new_parse_known_args, parser)
