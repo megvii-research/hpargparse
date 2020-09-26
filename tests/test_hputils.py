@@ -281,3 +281,16 @@ class TestAll(unittest.TestCase):
         parser.parse_args(["sub", "--a", str(2)])
 
         self.assertEqual(2, hp_mgr.get_values()["a"])
+
+    def test_string_as_default_should_not_be_saved(self):
+        hp_mgr = hpman.HyperParameterManager("_")
+        hp_mgr.parse_source('_("a", "hello")')
+
+        parser = argparse.ArgumentParser(
+            formatter_class=argparse.ArgumentDefaultsHelpFormatter
+        )
+        hpargparse.bind(parser, hp_mgr)
+        args = parser.parse_args(["--a", "world"])
+        self.assertNotIsInstance(
+            hp_mgr.get_value("a"), hpargparse.hputils.StringAsDefault
+        )
