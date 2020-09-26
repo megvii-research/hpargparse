@@ -473,6 +473,8 @@ def bind(
             v = old_values[k]
             assert hasattr(args, k)
             t = getattr(args, k)
+            if isinstance(t, StringAsDefault):
+                t = str(t)
             hp_mgr.set_value(k, t)
 
         save_value = get_action_value("save")
