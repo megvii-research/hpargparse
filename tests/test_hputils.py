@@ -291,4 +291,6 @@ class TestAll(unittest.TestCase):
         )
         hpargparse.bind(parser, hp_mgr)
         args = parser.parse_args(["--a", "world"])
-        self.assertNotIsInstance(args.a, hpargparse.hputils.StringAsDefault)
+        self.assertNotIsInstance(
+            hp_mgr.get_value("a"), hpargparse.hputils.StringAsDefault
+        )
