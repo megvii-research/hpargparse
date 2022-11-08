@@ -17,7 +17,7 @@ test_file_dir = Path(BASE_DIR) / "test_files"
 @contextlib.contextmanager
 def auto_cleanup_temp_dir():
     """
-    :return: a `class`:`pathlib.Path` object 
+    :return: a `class`:`pathlib.Path` object
     """
     try:
         tmpdir = Path(tempfile.mkdtemp(prefix="hpargparse-test"))
@@ -112,7 +112,7 @@ class TestAll(unittest.TestCase):
         parser, hp_mgr = self._make_basic()
         self.assertRaisesRegex(
             TypeError,
-            "int\\(\\) argument must be a string, a bytes-like object or a number, not 'dict'",
+            """\\('Error parsing hyperparameter `a`', "int\\(\\) argument must be a string, a bytes-like object or a real number, not 'dict'"\\)""",
             parser.parse_args,
             [
                 "an_arg_value",
@@ -264,9 +264,30 @@ class TestAll(unittest.TestCase):
         hpargparse.bind(parser, hp_mgr)
 
         h = parser.format_help()
-        self.assertRegex(h, "default: 1")
-        self.assertRegex(h, "default: True")
-        self.assertRegex(h, "default: deadbeef")
+
+        self.assertRegex(h, "A int hyper-parameter named `a`\\. \\(default: 1\\)")
+        self.assertRegex(h, "--b {True,False}")
+        self.assertRegex(h, "A bool hyper-parameter named `b`\\. \\(default: True\\)")
+        self.assertRegex(
+            h, "A str hyper-parameter named `c`\\. \\(default: deadbeef\\)"
+        )
+
+    def test_show_use_defined_arguments(self):
+        hp_mgr, parser = self._make_pair()
+        # help message
+        hp_mgr.parse_source('_("b", True, help="a help message")')
+        # choices
+        hp_mgr.parse_source('_("c", "deadbeef", choices=["deadbeef", "beefdead"])')
+        # required
+        hp_mgr.parse_source('_("d", "somevalue", required=True)')
+
+        hpargparse.bind(parser, hp_mgr)
+
+        h = parser.format_help()
+
+        self.assertRegex(h, "a help message")
+        self.assertRegex(h, "--c {deadbeef,beefdead}")
+        self.assertNotRegex(h, "\\[--d D\\]")
 
     def test_subparser(self):
         hp_mgr = hpman.HyperParameterManager("_")

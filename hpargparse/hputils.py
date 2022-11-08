@@ -8,6 +8,7 @@ import functools
 import dill
 import yaml
 import json
+import collections
 import os
 from copy import deepcopy
 
@@ -18,7 +19,6 @@ from hpman import (
     HyperParameterManager,
     HyperParameterOccurrence,
     SourceHelper,
-    L,
     EmptyValue,
 )
 
@@ -89,8 +89,7 @@ def make_value_illu(v):
 
 
 def hp_list(mgr):
-    """Print hyperparameter settings to stdout
-    """
+    """Print hyperparameter settings to stdout"""
 
     syntax = Syntax(
         "All hyperparameters:\n" + "    {}".format(sorted(mgr.get_values().keys())),
@@ -116,6 +115,7 @@ def hp_list(mgr):
     table.add_column("value", style="light_cyan1")
     table.add_column("details")
 
+    """
     for k, d in sorted(mgr.db.group_by("name").items()):
         details = []
         for i, oc in enumerate(
@@ -139,6 +139,30 @@ def hp_list(mgr):
             k,
             str(type(oc.value).__name__),
             str(make_value_illu(oc.value)),
+            detail_syntax,
+        )
+        """
+
+    for node in sorted(mgr.tree.flatten(), key=lambda x: x.name):
+        details = []
+        for i, oc in enumerate(sorted(node.db, key=lambda x: x.filename)):
+            # make context detail
+            details.append(
+                {
+                    "name": "occurrence[{}]".format(i),
+                    "detail": SourceHelper.format_given_filepath_and_lineno(
+                        oc.filename, oc.lineno
+                    ),
+                }
+            )
+
+        # combine details
+        detail_str = make_detail_str(details)
+        detail_syntax = Syntax(detail_str, "python", theme="monokai")
+        table.add_row(
+            node.name,
+            str(type(node.value).__name__),
+            str(make_value_illu(node.value)),
             detail_syntax,
         )
 
@@ -215,13 +239,11 @@ def inject_args(
     :return: The injected parser.
     """
 
-    help = ""
     if show_defaults:
         parser.formatter_class = argparse.ArgumentDefaultsHelpFormatter
 
         # Default value will be shown when using argparse.ArgumentDefaultsHelpFormatter
         # only if a help message is present. This is the behavior of argparse.
-        help = " "
 
     value_names_been_set = set()
 
@@ -237,30 +259,58 @@ def inject_args(
 
         return wrapper
 
+    def get_node_attr(node, attr_name):
+        for oc in node.db:
+            if hasattr(oc, attr_name):
+                return getattr(oc, attr_name)
+
+            if attr_name in oc.hints:
+                return oc.hints[attr_name]
+
+        return None
+
     # add options for collected hyper-parameters
-    for k, v in hp_mgr.get_values().items():
+    for node in hp_mgr.get_nodes():
+        k = get_node_attr(node, "name")
+        v = node.get().value
+
         # this is just a simple hack
         option_name = "--{}".format(k.replace("_", "-"))
 
-        if _get_argument_type_by_value(v) == bool:
+        value_type = _get_argument_type_by_value(v)
+        type_str = value_type.__name__
+        help = (
+            get_node_attr(node, "help") or f"A {type_str} hyper-parameter named `{k}`."
+        )
+        choices = get_node_attr(node, "choices")
+        required = get_node_attr(node, "required")
+        other_kwargs = {
+            "choices": choices,
+            "required": required,
+            "help": help,
+        }
+
+        if value_type == bool:
             # argparse does not directly support bool types.
+            other_kwargs.update(choices=["True", "False"])
             parser.add_argument(
                 option_name,
                 type=_make_value_names_been_set_injection(k, str2bool),
                 default=v,
-                help=help,
+                **other_kwargs,
             )
         else:
             if isinstance(v, str):
                 # if isinstance(v, str), mark as StringAsDefault
                 v = StringAsDefault(v)
+
             parser.add_argument(
                 option_name,
                 type=_make_value_names_been_set_injection(
                     k, _get_argument_type_by_value(v)
                 ),
                 default=v,
-                help=help,
+                **other_kwargs,
             )
 
     make_option = lambda name: "--{}-{}".format(action_prefix, name)
@@ -481,6 +531,12 @@ def bind(
         if "save" in inject_actions and save_value is not None:
             hp_save(save_value, hp_mgr, serial_format)
 
+        # `--hp-detail`` need to preceed `--hp-list`` because `--hp-list detail`
+        # will be set by default.
+        if "detail" in inject_actions and get_action_value("detail"):
+            hp_list(hp_mgr)
+            sys.exit(0)
+
         hp_list_value = get_action_value("list")
         if "list" in inject_actions and hp_list_value is not None:
             if hp_list_value == "yaml":
@@ -501,11 +557,6 @@ def bind(
                 assert hp_list_value == "detail", hp_list_value
                 hp_list(hp_mgr)
 
-            sys.exit(0)
-
-        hp_detail_value = get_action_value("detail")
-        if "detail" in inject_actions and hp_detail_value:
-            hp_list(hp_mgr)
             sys.exit(0)
 
         if inject_actions and get_action_value("exit"):
