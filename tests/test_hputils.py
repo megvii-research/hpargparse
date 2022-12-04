@@ -315,3 +315,19 @@ class TestAll(unittest.TestCase):
         self.assertNotIsInstance(
             hp_mgr.get_value("a"), hpargparse.hputils.StringAsDefault
         )
+
+    def test_bool_argument(self):
+        hp_mgr, parser = self._make_pair()
+        hp_mgr.parse_source("_('b', True)")
+        hpargparse.bind(parser, hp_mgr)
+
+        args = parser.parse_args(["--b", "False"])
+        self.assertEqual(args.b, False)
+
+        # test the other way around
+        hp_mgr, parser = self._make_pair()
+        hp_mgr.parse_source("_('b', False)")
+        hpargparse.bind(parser, hp_mgr)
+
+        args = parser.parse_args(["--b", "True"])
+        self.assertEqual(args.b, True)

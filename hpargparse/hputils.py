@@ -292,7 +292,7 @@ def inject_args(
 
         if value_type == bool:
             # argparse does not directly support bool types.
-            other_kwargs.update(choices=["True", "False"])
+            other_kwargs.update(choices=[True, False])
             parser.add_argument(
                 option_name,
                 type=_make_value_names_been_set_injection(k, str2bool),
